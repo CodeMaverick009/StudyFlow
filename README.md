@@ -1,2 +1,4 @@
 # StudyFlow
-A modern student study management platform for organizing tasks, planning study sessions, and tracking academic progress.
+
+A calm, intelligent study management platform featuring focus timers,
+  ambient soundscapes, planner, and analytics.

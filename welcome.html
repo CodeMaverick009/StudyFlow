@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Studyflow — a calm and intelligent study management platform."
+    >
+
+    <title>Studyflow — Welcome</title>
+
+    <script>
+        (() => {
+            const savedTheme =
+                localStorage.getItem("studyflow-theme") || "dark";
+
+            document.documentElement.setAttribute(
+                "data-theme",
+                savedTheme
+            );
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/welcome.css">
+</head>
+
+<body data-page="welcome">
+
+    <div class="welcome-page">
+
+        <header class="welcome-topbar">
+
+            <span class="welcome-brand">
+                <span class="logo-mark" aria-hidden="true">
+                    <svg
+                        class="studyflow-logo"
+                        viewBox="0 0 48 48"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path class="logo-book logo-book-bottom" d="M7 31.5L35 27.5L41 31L13 36L7 31.5Z" fill="currentColor" />
+                        <path class="logo-book-edge logo-book-bottom-edge" d="M13 36V39L41 34V31L13 36Z" fill="currentColor" />
+                        <path class="logo-book logo-book-middle" d="M10 24L34 20.5L40 24L16 28.5L10 24Z" fill="currentColor" />
+                        <path class="logo-book-edge logo-book-middle-edge" d="M16 28.5V31.5L40 27V24L16 28.5Z" fill="currentColor" />
+                        <path class="logo-book logo-book-top" d="M14 17L35 14L40 17L19 21L14 17Z" fill="currentColor" />
+                        <path class="logo-book-edge logo-book-top-edge" d="M19 21V23.5L40 19.5V17L19 21Z" fill="currentColor" />
+                        <circle class="logo-dot" cx="29" cy="9" r="3.5" fill="currentColor" />
+                    </svg>
+                </span>
+                Studyflow
+            </span>
+
+            <div class="welcome-topbar-actions">
+
+                <button
+                    type="button"
+                    class="theme-toggle"
+                    id="theme-toggle"
+                    aria-label="Switch theme"
+                >
+                    <i data-lucide="sun" class="theme-icon theme-icon-light" aria-hidden="true"></i>
+                    <i data-lucide="moon" class="theme-icon theme-icon-dark" aria-hidden="true"></i>
+                    <span class="theme-toggle-label">Theme</span>
+                </button>
+
+                <button type="button" class="button button-secondary" id="welcome-login-button">
+                    Log in
+                </button>
+
+            </div>
+
+        </header>
+
+        <main class="welcome-hero">
+
+            <div class="welcome-hero-text">
+
+                <p class="welcome-greeting">Welcome to Studyflow</p>
+
+                <h1>Your schoolwork, in flow.</h1>
+
+                <p class="welcome-description">
+                    Studyflow is your personal study workspace, built to help you
+                    stay organized from your first assignment to your final study
+                    session.
+                </p>
+
+                <p class="welcome-description">
+                    Keep track of what needs to be done, plan when you'll do it,
+                    focus during your study sessions, and see how you're
+                    progressing over time.
+                </p>
+
+                <button
+                    type="button"
+                    class="welcome-get-started js-open-signup"
+                    id="welcome-get-started"
+                >
+                    Get started
+                </button>
+
+                <p class="welcome-hero-note">
+                    Free, and nothing leaves this browser — see
+                    <a href="#welcome-privacy">how your data is stored</a>.
+                </p>
+
+            </div>
+
+            <div class="welcome-preview">
+
+                <div class="welcome-preview-backer" aria-hidden="true"></div>
+
+                <div class="welcome-preview-card">
+
+                    <div class="welcome-preview-header">
+                        <span>Today</span>
+                        <span class="welcome-preview-date">Thu, Sep 10</span>
+                    </div>
+
+                    <div class="welcome-preview-stats">
+                        <div class="welcome-preview-stat">
+                            <strong id="welcome-preview-tasks-left">3</strong>
+                            <span>tasks left</span>
+                        </div>
+                        <div class="welcome-preview-stat">
+                            <strong>1h 45m</strong>
+                            <span>study time</span>
+                        </div>
+                    </div>
+
+                    <div class="welcome-preview-tasks">
+
+                        <button type="button" class="welcome-preview-task" data-preview-task>
+                            <span class="welcome-preview-check" aria-hidden="true"></span>
+                            <span>Physics — problem set 4</span>
+                        </button>
+
+                        <button type="button" class="welcome-preview-task" data-preview-task>
+                            <span class="welcome-preview-check" aria-hidden="true"></span>
+                            <span>Read history ch. 12</span>
+                        </button>
+
+                        <button type="button" class="welcome-preview-task" data-preview-task>
+                            <span class="welcome-preview-check" aria-hidden="true"></span>
+                            <span>Revise Spanish vocab</span>
+                        </button>
+
+                    </div>
+
+                    <div class="welcome-preview-progress">
+                        <div class="welcome-preview-progress-track">
+                            <span id="welcome-preview-progress-bar" style="width: 0%"></span>
+                        </div>
+                        <span class="welcome-preview-progress-label" id="welcome-preview-progress-label">0% of this week done</span>
+                    </div>
+
+                </div>
+
+                <p class="welcome-preview-hint">Try it — check off a task</p>
+
+            </div>
+
+        </main>
+
+
+        <!-- =====================================================
+             HOW STUDYFLOW WORKS — animated 4-step sequence
+        ====================================================== -->
+
+        <section class="welcome-workflow-section" data-reveal>
+
+            <h2 class="welcome-section-heading">How Studyflow works</h2>
+
+            <ol class="welcome-workflow-list">
+
+                <li class="welcome-workflow-item">
+                    <span class="welcome-workflow-index">01</span>
+                    <h3>Tasks</h3>
+                    <p>Add what you need to do.</p>
+                </li>
+
+                <li class="welcome-workflow-item">
+                    <span class="welcome-workflow-index">02</span>
+                    <h3>Planner</h3>
+                    <p>Decide when you'll do it.</p>
+                </li>
+
+                <li class="welcome-workflow-item">
+                    <span class="welcome-workflow-index">03</span>
+                    <h3>Study</h3>
+                    <p>Focus on the task at hand.</p>
+                </li>
+
+                <li class="welcome-workflow-item">
+                    <span class="welcome-workflow-index">04</span>
+                    <h3>Progress</h3>
+                    <p>See what you've gotten done.</p>
+                </li>
+
+            </ol>
+
+        </section>
+
+
+        <!-- =====================================================
+             EVERYTHING IN ONE PLACE
+        ====================================================== -->
+
+        <section class="welcome-details" data-reveal>
+
+            <h2 class="welcome-section-heading">Everything in one place</h2>
+
+            <div class="welcome-details-list">
+
+                <div class="welcome-details-item">
+                    <h3>Tasks &amp; materials</h3>
+                    <p>
+                        Add assignments, homework, tests and projects as they come
+                        in. Give each one a deadline, an estimated study time, a
+                        difficulty, and a priority, so you always know what
+                        matters most.
+                    </p>
+                </div>
+
+                <div class="welcome-details-item">
+                    <h3>Planner</h3>
+                    <p>
+                        Turn your tasks into an actual schedule. See what's due
+                        each day on a calendar, and keep your workload spread out
+                        instead of piling up.
+                    </p>
+                </div>
+
+                <div class="welcome-details-item">
+                    <h3>Study</h3>
+                    <p>
+                        When it's time to work, start a focused study session with
+                        a timer built around one task at a time — no
+                        tab-switching, no multitasking.
+                    </p>
+                </div>
+
+                <div class="welcome-details-item">
+                    <h3>Progress</h3>
+                    <p>
+                        Your completed tasks and finished sessions turn into real
+                        insight — how much you studied, which subjects got the
+                        attention, and how consistent you've been.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             FINAL CTA
+        ====================================================== -->
+
+        <section class="welcome-final-cta" data-reveal id="welcome-privacy">
+
+            <h2>Ready to get started?</h2>
+
+            <p>Take control of your schoolwork and make your study time count.</p>
+
+            <button
+                type="button"
+                class="welcome-get-started js-open-signup"
+                id="welcome-final-cta-button"
+            >
+                Enter Studyflow
+            </button>
+
+            <p class="welcome-final-fineprint">
+                Studyflow has no server — your account, tasks and sessions are
+                saved only in this browser's local storage, tied to the email
+                you sign up with. There's no cloud sync yet, so a different
+                device means starting a new account.
+            </p>
+
+        </section>
+
+        <footer class="welcome-footer">
+            Studyflow — a calm and intelligent study management platform.
+        </footer>
+
+    </div>
+
+
+    <!-- =====================================================
+         SIGN UP MODAL
+    ====================================================== -->
+
+    <div id="signup-modal" class="modal" aria-hidden="true">
+        <div class="modal-backdrop" data-close-signup></div>
+        <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="signup-title">
+
+            <div class="modal-header">
+                <div>
+                    <h2 id="signup-title">Create your account</h2>
+                    <p>Takes a few seconds — no email confirmation needed.</p>
+                </div>
+                <button type="button" class="modal-close" id="signup-close" aria-label="Close">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <form id="signup-form" novalidate>
+                <div class="modal-body">
+
+                    <div class="form-field form-field-full">
+                        <label for="signup-name">Name</label>
+                        <input type="text" id="signup-name" name="name" placeholder="e.g. Alex Rivera" required>
+                    </div>
+
+                    <div class="form-field form-field-full">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" name="email" placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="form-field form-field-full">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" name="password" placeholder="At least 8 characters" minlength="8" required>
+                    </div>
+
+                    <p class="auth-error" id="signup-error" role="alert" hidden></p>
+
+                    <p class="auth-fineprint">
+                        Stored only in this browser — Studyflow has no server, so
+                        this account won't be reachable from another device.
+                    </p>
+
+                </div>
+                <div class="modal-footer auth-modal-footer">
+                    <button type="button" class="text-button" id="signup-switch-to-login">
+                        Already have an account? Log in
+                    </button>
+                    <button type="submit" class="button button-primary">
+                        <span class="auth-submit-label">Create account</span>
+                    </button>
+                </div>
+            </form>
+
+        </section>
+    </div>
+
+
+    <!-- =====================================================
+         LOG IN MODAL
+    ====================================================== -->
+
+    <div id="login-modal" class="modal" aria-hidden="true">
+        <div class="modal-backdrop" data-close-login></div>
+        <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="login-title">
+
+            <div class="modal-header">
+                <div>
+                    <h2 id="login-title">Log in</h2>
+                    <p>Welcome back.</p>
+                </div>
+                <button type="button" class="modal-close" id="login-close" aria-label="Close">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <form id="login-form" novalidate>
+                <div class="modal-body">
+
+                    <div class="form-field form-field-full">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" name="email" placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="form-field form-field-full">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" name="password" required>
+                    </div>
+
+                    <p class="auth-error" id="login-error" role="alert" hidden></p>
+
+                </div>
+                <div class="modal-footer auth-modal-footer">
+                    <button type="button" class="text-button" id="login-switch-to-signup">
+                        Need an account? Create one
+                    </button>
+                    <button type="submit" class="button button-primary">
+                        <span class="auth-submit-label">Log in</span>
+                    </button>
+                </div>
+            </form>
+
+        </section>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="module" src="js/welcome.js"></script>
+
+</body>
+</html>
