@@ -1,0 +1,203 @@
+/* =========================================================
+   Planner Responsive
+========================================================= */
+
+@media (max-width: 900px) {
+    .planner-calendar-header { align-items: flex-start; flex-direction: column; gap: var(--space-4); }
+    .planner-legend { display: none; }
+    .planner-grid { height: min(520px, calc(100vh - 280px)); min-height: 320px; grid-auto-rows: 100px; }
+    .planner-day { height: 100px; min-height: 100px; padding: 7px; }
+    .planner-task { padding: 5px; font-size: .7rem; }
+}
+
+@media (max-width: 900px) {
+    .progress-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .progress-main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .progress-stats-grid {
+        gap: var(--space-3);
+    }
+
+    .progress-stat-card {
+        padding: var(--space-4);
+    }
+
+    .progress-week-chart,
+    .progress-task-completion,
+    .progress-subject-list,
+    .progress-activity-list {
+        padding: var(--space-4);
+    }
+}
+
+@media (max-width: 650px) {
+    .planner-page-intro { align-items: stretch; flex-direction: column; }
+    .planner-actions { width: 100%; }
+    .planner-actions .button { flex: 1; }
+    .planner-calendar-card { margin-top: var(--space-5); border-radius: var(--radius-md); }
+    .planner-calendar-header { padding: var(--space-4); }
+    .planner-month-navigation { width: 100%; justify-content: space-between; }
+    .planner-month-navigation h2 { min-width: 0; font-size: 1rem; }
+    .planner-weekdays > div { padding: 8px 4px; font-size: .65rem; text-align: center; }
+    .planner-grid { height: min(420px, calc(100vh - 250px)); min-height: 280px; grid-auto-rows: 72px; }
+    .planner-day { height: 72px; min-height: 72px; padding: 5px; }
+    .planner-day-header { margin-bottom: 2px; }
+    .planner-day-number { width: 23px; height: 23px; font-size: .7rem; }
+    .planner-today-label { display: none; }
+    .planner-task { padding: 4px; }
+    .planner-task-indicator { width: 5px; height: 5px; }
+    .planner-task-name { font-size: .65rem; }
+    .planner-upcoming-item { padding: var(--space-3); gap: var(--space-3); }
+}
+/* =========================================================
+   STUDY PAGE RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .study-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .study-session-card {
+        min-height: auto;
+    }
+
+    .study-session-start,
+    .study-session-active {
+        min-height: 360px;
+    }
+
+    .study-overview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 800px) {
+
+    .study-page-intro {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .study-page-actions {
+        width: 100%;
+    }
+
+    .study-page-actions .button {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .study-routine-card {
+        min-height: auto;
+    }
+
+    .study-routine-item {
+        grid-template-columns: 54px minmax(0, 1fr) auto;
+        gap: var(--space-3);
+    }
+
+    .study-history-item {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: var(--space-3);
+    }
+
+    .study-history-status {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .study-history-duration {
+        grid-column: 2;
+        grid-row: 2;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .study-main-grid {
+        margin-top: var(--space-6);
+    }
+
+    .study-overview-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-3);
+    }
+
+    .study-stat-card {
+        padding: var(--space-4);
+    }
+
+    .study-stat-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .study-stat-value {
+        font-size: 0.95rem;
+    }
+
+    .study-duration-options {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .study-session-controls {
+        width: 100%;
+    }
+
+    .study-session-controls .button {
+        flex: 1;
+    }
+
+    .study-plan-time-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .study-upcoming-item {
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+    }
+
+    .study-upcoming-item .button {
+        width: 100%;
+    }
+}
+
+
+@media (max-width: 450px) {
+
+    .study-page-actions {
+        flex-direction: column;
+    }
+
+    .study-page-actions .button {
+        width: 100%;
+    }
+
+    .study-overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .study-routine-item {
+        grid-template-columns: 48px minmax(0, 1fr);
+    }
+
+    .study-routine-action {
+        grid-column: 2;
+        justify-self: start;
+    }
+
+    .study-timer {
+        font-size: 3.25rem;
+    }
+}
