@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Studyflow — a calm and intelligent study management platform."
+    >
+
+    <title>Studyflow — Dashboard</title>
+
+    <script>
+        (() => {
+            const savedTheme =
+                localStorage.getItem("studyflow-theme") || "dark";
+
+            document.documentElement.setAttribute(
+                "data-theme",
+                savedTheme
+            );
+        })();
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body data-page="dashboard">
+
+    <div id="app">
+
+        <!-- Sidebar -->
+        <aside id="sidebar"></aside>
+
+        <!-- Main application -->
+        <div class="app-shell">
+
+            <!-- Header -->
+            <header id="header"></header>
+
+            <!-- Page content -->
+            <main class="main-content">
+
+                <!-- Dashboard greeting -->
+                <section class="dashboard-intro">
+
+                    <div>
+                        <p class="current-date" id="current-date">
+                            Loading date...
+                        </p>
+
+                        <h1 id="greeting">
+                            Good morning
+                        </h1>
+
+                        <p class="page-description">
+                            Here's what your day looks like:
+                        </p>
+                    </div>
+
+                    <button
+                        class="button button-primary quick-add-button"
+                        id="quick-add-button"
+                    >
+                        <i data-lucide="plus" aria-hidden="true"></i>
+                        Quick Add
+                    </button>
+
+                </section>
+
+
+                <!-- Statistics -->
+                <section
+                    class="stats-grid"
+                    aria-label="Study statistics"
+                >
+
+                    <article class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">
+                                Today's Tasks
+                            </span>
+
+                            <span class="stat-icon" aria-hidden="true">
+                            <i data-lucide="circle-check"></i>
+                            </span> 
+                        </div>
+
+                        <strong
+                            class="stat-value"
+                            id="today-task-count"
+                        >
+                            0
+                        </strong>
+
+                        <p class="stat-description">
+                            <span data-today-completed>
+                                0 completed
+                            </span>
+                        </p>
+                    </article>
+
+
+                    <article class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">
+                                Study Time
+                            </span>
+
+                            <span class="stat-icon" aria-hidden="true">
+                            <i data-lucide="circle-check"></i>
+                            </span>
+                        </div>
+
+                        <strong
+                            class="stat-value"
+                            id="study-time"
+                        >
+                            0 min
+                        </strong>
+
+                        <p class="stat-description">
+                            planned today
+                        </p>
+                    </article>
+
+
+                    <article class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">
+                                Upcoming
+                            </span>
+
+                            <span class="stat-icon" aria-hidden="true">
+                            <i data-lucide="calendar-clock"></i>
+                            </span>
+                        </div>
+
+                        <strong
+                            class="stat-value"
+                            id="upcoming-count"
+                        >
+                            0
+                        </strong>
+
+                        <p class="stat-description">
+                            upcoming deadlines
+                        </p>
+                    </article>
+
+
+                    <article class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">
+                                Weekly Progress
+                            </span>
+
+                            <span class="stat-icon" aria-hidden="true">
+                            <i data-lucide="chart-no-axes-combined"></i>
+                            </span>
+                        </div>
+
+                        <strong
+                            class="stat-value"
+                            id="weekly-progress"
+                        >
+                            0%
+                        </strong>
+
+                        <p class="stat-description">
+                            tasks completed
+                        </p>
+                    </article>
+
+                </section>
+
+
+                <!-- Dashboard grid -->
+                <section class="dashboard-grid">
+
+                    <!-- Today's tasks -->
+                    <article class="content-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h2>Today's Tasks</h2>
+                                <p>
+                                    Stay on top of what needs to get done.
+                                </p>
+                            </div>
+
+                            <a
+                                href="tasks.html"
+                                class="text-link"
+                            >
+                                View all
+                            </a>
+
+                        </div>
+
+                        <div
+                            class="empty-state"
+                            id="today-tasks"
+                        >
+                            <div class="empty-state-icon">
+                            <i data-lucide="circle-check" aria-hidden="true"></i>
+                            </div>
+
+                            <h3>
+                                You're all caught up
+                            </h3>
+
+                            <p>
+                                No tasks scheduled for today.
+                            </p>
+                        </div>
+
+                    </article>
+
+
+                    <!-- Upcoming -->
+                    <article class="content-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h2>Upcoming Deadlines</h2>
+                                <p>
+                                    Keep an eye on what's coming next.
+                                </p>
+                            </div>
+
+                            <a
+                                href="tasks.html"
+                                class="text-link"
+                            >
+                                View all
+                            </a>
+
+                        </div>
+
+                        <div
+                            class="empty-state"
+                            id="upcoming-deadlines"
+                        >
+                            <div class="empty-state-icon">
+                            <i data-lucide="clock-3" aria-hidden="true"></i>
+                            </div>
+
+                            <h3>
+                                Nothing coming up
+                            </h3>
+
+                            <p>
+                                Your upcoming deadlines will appear here.
+                            </p>
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+                <!-- Study sessions -->
+                <section class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <h2>Today's Study Sessions</h2>
+
+                            <p>
+                                Focused time you've planned for today.
+                            </p>
+                        </div>
+
+                        <a
+                            href="planner.html"
+                            class="text-link"
+                        >
+                            Open planner
+                        </a>
+
+                    </div>
+
+                    <div
+                        class="empty-state"
+                        id="today-sessions"
+                    >
+
+                        <div class="empty-state-icon">
+                        <i data-lucide="clock-3" aria-hidden="true"></i>
+                        </div>
+
+                        <h3>
+                            No study sessions planned
+                        </h3>
+
+                        <p>
+                            Plan some focused study time to get started.
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="module" src="js/app.js"></script>
+    
+    
+    <!-- =========================================================
+     QUICK ADD MODAL
+     ========================================================= -->
+
+    <div
+        id="quick-add-modal"
+        class="modal"
+        aria-hidden="true"
+    >
+        <div
+            class="modal-backdrop"
+            data-close-modal
+        ></div>
+
+        <section
+            class="modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="quick-add-title"
+        >
+
+            <div class="modal-header">
+
+                <div>
+                    <h2 id="quick-add-title">
+                        Quickly add a task
+                    </h2>
+
+                    <p>
+                        Add something you need to get done quickly.<br>
+                        For more options, use the "Add task" button in Tasks &amp; Materials.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="quick-add-close"
+                    aria-label="Close"
+                >
+                    <i data-lucide="x"></i>
+                </button>
+
+            </div>
+
+
+            <form id="quick-add-form">
+
+                <div class="modal-body">
+
+                    <!-- Task name -->
+
+                    <div class="form-field form-field-full">
+
+                        <label for="task-name">
+                            Task name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="task-name"
+                            name="name"
+                            placeholder="e.g. Physics test"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Subject + Type -->
+
+                    <div class="form-grid">
+
+                        <div class="form-field">
+
+                            <label for="task-subject">
+                                Subject
+                            </label>
+
+                            <input
+                                type="text"
+                                id="task-subject"
+                                name="subject"
+                                placeholder="e.g. Physics"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-field">
+
+                            <label for="task-type">
+                                Type
+                            </label>
+
+                            <select
+                                id="task-type"
+                                name="type"
+                                required
+                            >
+                                <option value="">
+                                    Select type
+                                </option>
+
+                                <option value="Homework">
+                                    Homework
+                                </option>
+
+                                <option value="Assignment">
+                                    Assignment
+                                </option>
+
+                                <option value="Test">
+                                    Test
+                                </option>
+
+                                <option value="Project">
+                                    Project
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Due date + Estimated time -->
+
+                    <div class="form-grid">
+
+                        <div class="form-field">
+
+                            <label for="task-due-date">
+                                Due date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="task-due-date"
+                                name="dueDate"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-field">
+
+                            <label for="task-time">
+                                Estimated time
+                            </label>
+
+                            <select
+                                id="task-time"
+                                name="estimatedMinutes"
+                                required
+                            >
+                                <option value="">
+                                    Select time
+                                </option>
+
+                                <option value="15">
+                                    15 minutes
+                                </option>
+
+                                <option value="30">
+                                    30 minutes
+                                </option>
+
+                                <option value="45">
+                                    45 minutes
+                                </option>
+
+                                <option value="60">
+                                    1 hour
+                                </option>
+
+                                <option value="90">
+                                    1.5 hours
+                                </option>
+
+                                <option value="120">
+                                    2 hours
+                                </option>
+
+                                <option value="180">
+                                    3 hours
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Difficulty + Priority -->
+
+                    <div class="form-grid">
+
+                        <div class="form-field">
+
+                            <label for="task-difficulty">
+                                Difficulty
+                            </label>
+
+                            <select
+                                id="task-difficulty"
+                                name="difficulty"
+                                required
+                            >
+                                <option value="">
+                                    Select difficulty
+                                </option>
+
+                                <option value="Easy">
+                                    Easy
+                                </option>
+
+                                <option value="Medium">
+                                    Medium
+                                </option>
+
+                                <option value="Hard">
+                                    Hard
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-field">
+
+                            <label for="task-priority">
+                                Priority
+                            </label>
+
+                            <select
+                                id="task-priority"
+                                name="priority"
+                            >
+                                <option value="Normal">
+                                    Normal
+                                </option>
+
+                                <option value="High">
+                                    High
+                                </option>
+
+                                <option value="Low">
+                                    Low
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Description -->
+
+                    <div class="form-field form-field-full">
+
+                        <label for="task-description">
+                            Description
+                            <span class="optional">
+                                Optional
+                            </span>
+                        </label>
+
+                        <textarea
+                            id="task-description"
+                            name="description"
+                            rows="3"
+                            placeholder="Add any details you need..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="button button-secondary"
+                        data-close-modal
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="button button-primary"
+                    >
+                        <i data-lucide="plus"></i>
+                        Quick add
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+    </div>
+</body>
+</html>
