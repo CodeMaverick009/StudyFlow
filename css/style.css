@@ -290,9 +290,7 @@ svg {
 }
 
 body[data-page="study"] .main-content {
-    width: calc(100% - var(--sidebar-collapsed-width));
     max-width: none;
-    margin-left: var(--sidebar-collapsed-width);
 }
 
 

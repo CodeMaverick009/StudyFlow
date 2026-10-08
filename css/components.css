@@ -3166,11 +3166,20 @@
     margin-top: var(--space-2);
 }
 
+.study-routine-list:empty {
+    display: none;
+}
 
-/* Empty routine state should stay compact */
-
+/* Empty routine state centered in card */
 .study-routine-empty {
-    min-height: 250px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 280px;
+    margin: auto 0;
     padding: var(--space-7) var(--space-5);
 }
 

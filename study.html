@@ -28,25 +28,34 @@
 
 <body data-page="study">
 
-    <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
+    <div id="app">
 
-    <aside
-        id="sidebar"
-        class="sidebar"
-        aria-label="Main navigation"
-    ></aside>
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside
+            id="sidebar"
+            class="sidebar"
+            aria-label="Main navigation"
+        ></aside>
 
 
-    <!-- =====================================================
-         MAIN CONTENT
-    ====================================================== -->
+        <!-- =====================================================
+             APP SHELL
+        ====================================================== -->
 
-    <main class="main-content">
+        <div class="app-shell">
 
-        <!-- Shared header -->
-        <header id="header"></header>
+            <!-- Shared header -->
+            <header id="header"></header>
+
+
+            <!-- =====================================================
+                 MAIN CONTENT
+            ====================================================== -->
+
+            <main class="main-content">
 
 
         <!-- =================================================
@@ -131,8 +140,7 @@
 
 
                     <!-- Routine progress -->
-
-                    <div class="study-routine-progress">
+                    <div class="study-routine-progress" id="study-routine-progress">
 
                         <div class="study-routine-progress-header">
 
@@ -724,6 +732,10 @@
         </div>
 
     </main>
+
+        </div>
+
+    </div>
 
 
     <!-- =====================================================

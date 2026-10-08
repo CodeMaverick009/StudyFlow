@@ -3,7 +3,8 @@
 // =========================================================
 
 import { toggleTheme } from "../theme.js";
-import { loadDemoData, exportUserData } from "../demoData.js";
+import { loadDemoData } from "../demoData.js";
+import { exportBackupData, triggerImportDialog } from "../backup.js";
 import { showToast } from "./toast.js";
 
 let paletteOverlay = null;
@@ -85,7 +86,18 @@ const COMMANDS = [
         category: "Data & Settings",
         icon: "download",
         action: () => {
-            exportUserData();
+            closeCommandPalette();
+            exportBackupData();
+        }
+    },
+    {
+        id: "action-import-data",
+        title: "Import Data Backup (JSON)...",
+        category: "Data & Settings",
+        icon: "upload",
+        action: () => {
+            closeCommandPalette();
+            triggerImportDialog();
         }
     }
 ];

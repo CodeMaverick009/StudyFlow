@@ -4,6 +4,7 @@
 
 import { getTasks, saveTasks, getStudySessions, saveStudySessions, getPlannerSessions, savePlannerSessions } from "./storage.js";
 import { showToast } from "./components/toast.js";
+import { exportBackupData } from "./backup.js";
 
 export function loadDemoData() {
     const today = new Date();
@@ -128,24 +129,5 @@ export function loadDemoData() {
 }
 
 export function exportUserData() {
-    const data = {
-        tasks: getTasks(),
-        sessions: getStudySessions(),
-        planner: getPlannerSessions(),
-        exportedAt: new Date().toISOString(),
-        version: "1.0"
-    };
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `studyflow-backup-${new Date().toISOString().split("T")[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-
-    showToast({
-        message: "Studyflow backup downloaded!",
-        type: "success"
-    });
+    exportBackupData();
 }

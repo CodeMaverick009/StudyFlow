@@ -3,6 +3,7 @@ import {
     updateTask,
     getPlannerSessions
 } from "./storage.js";
+import { triggerImportDialog } from "./backup.js";
 
 let currentDate = new Date();
 let selectedTaskId = null;
@@ -27,6 +28,9 @@ function initializePlannerControls() {
         const today = new Date();
         currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
         renderPlanner();
+    });
+    document.getElementById("planner-import-data")?.addEventListener("click", () => {
+        triggerImportDialog();
     });
     document.getElementById("planner-add-task")?.addEventListener("click", () => { window.location.href = "tasks.html?add=1"; });
     document.getElementById("planner-task-details-close")?.addEventListener("click", closeTaskDetails);

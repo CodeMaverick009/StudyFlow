@@ -9,6 +9,7 @@ import {
     signIn
 } from "./storage.js";
 import { validateEmail, attachEmailInputValidation } from "./validation.js";
+import { playAmbientSound, stopAmbientSound } from "./ambientAudio.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -27,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeThemeToggle();
     initializeAuthModals();
     initializePreviewDemo();
+    initializePipelineTutorial();
     initializeScrollReveal();
 });
 
@@ -308,11 +310,15 @@ function updatePreviewStats() {
         tasksLeft.textContent = total - done;
     }
 
-    // Start from a baseline of 62% "done this week" and nudge it with
-    // whatever the visitor checks off, just to show the bar responding.
-    const baseline = 62;
-    const bonus = Math.round((done / total) * 30);
-    const percentage = Math.min(100, baseline + bonus);
+    // Each checked checkbox contributes 33% (and 100% when all 3 are completed)
+    let percentage = 0;
+    if (done === 0) {
+        percentage = 0;
+    } else if (done >= total && total > 0) {
+        percentage = 100;
+    } else {
+        percentage = done * 33;
+    }
 
     if (progressBar) {
         progressBar.style.width = `${percentage}%`;
@@ -321,4 +327,221 @@ function updatePreviewStats() {
     if (progressLabel) {
         progressLabel.textContent = `${percentage}% of this week done`;
     }
+}
+
+
+// =========================================================
+// THE PIPELINE — INTERACTIVE APP WALKTHROUGH
+// =========================================================
+
+function initializePipelineTutorial() {
+    const steps = document.querySelectorAll("[data-pipeline-step]");
+    const navButtons = document.querySelectorAll("[data-mockup-tab]");
+    const panes = document.querySelectorAll("[data-pipeline-pane]");
+
+    if (!steps.length || !panes.length) {
+        return;
+    }
+
+    let activeIndex = 0;
+    let isUserClicking = false;
+    let userClickTimeout = null;
+
+    function setActiveStep(index) {
+        if (index < 0 || index >= steps.length) return;
+        activeIndex = index;
+
+        // Steps highlighting
+        steps.forEach((step, idx) => {
+            step.classList.toggle("is-active", idx === index);
+        });
+
+        // Mockup sidebar highlighting
+        navButtons.forEach((btn, idx) => {
+            btn.classList.toggle("is-active", idx === index);
+        });
+
+        // Mockup panes switching
+        panes.forEach((pane, idx) => {
+            pane.classList.toggle("is-active", idx === index);
+        });
+
+        // If navigating away from Focus Room (step 2), stop ambient audio
+        if (index !== 2) {
+            stopDemoAudio();
+        }
+
+        if (typeof lucide !== "undefined") {
+            lucide.createIcons();
+        }
+    }
+
+    // Step clicks
+    steps.forEach((step, idx) => {
+        step.addEventListener("click", () => {
+            isUserClicking = true;
+            clearTimeout(userClickTimeout);
+            setActiveStep(idx);
+            userClickTimeout = setTimeout(() => {
+                isUserClicking = false;
+            }, 800);
+        });
+    });
+
+    // Mockup sidebar tab clicks
+    navButtons.forEach((btn, idx) => {
+        btn.addEventListener("click", () => {
+            isUserClicking = true;
+            clearTimeout(userClickTimeout);
+            setActiveStep(idx);
+            userClickTimeout = setTimeout(() => {
+                isUserClicking = false;
+            }, 800);
+        });
+    });
+
+    // Scroll synchronization via IntersectionObserver
+    if ("IntersectionObserver" in window) {
+        const stepObserver = new IntersectionObserver((entries) => {
+            if (isUserClicking) return;
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const stepIdx = parseInt(entry.target.dataset.pipelineStep, 10);
+                    if (!isNaN(stepIdx)) {
+                        setActiveStep(stepIdx);
+                    }
+                }
+            });
+        }, {
+            threshold: 0.55,
+            rootMargin: "0px 0px -20% 0px"
+        });
+
+        steps.forEach(step => stepObserver.observe(step));
+    }
+
+    // ---------------------------------------------------------
+    // Pane 0: Tasks Interactivity
+    // ---------------------------------------------------------
+    const taskCards = document.querySelectorAll("[data-pipeline-task]");
+    taskCards.forEach(card => {
+        const checkbox = card.querySelector(".pipeline-task-checkbox");
+        checkbox?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            card.classList.toggle("is-done");
+        });
+    });
+
+    const priorityButtons = document.querySelectorAll("[data-priority-toggle]");
+    const priorities = [
+        { label: "High priority", className: "priority-high" },
+        { label: "Med priority", className: "priority-med" },
+        { label: "Low priority", className: "priority-low" }
+    ];
+
+    priorityButtons.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const currentIdx = priorities.findIndex(p => btn.classList.contains(p.className));
+            const nextIdx = (currentIdx + 1) % priorities.length;
+            btn.classList.remove("priority-high", "priority-med", "priority-low");
+            btn.classList.add(priorities[nextIdx].className);
+            btn.textContent = priorities[nextIdx].label;
+        });
+    });
+
+    // ---------------------------------------------------------
+    // Pane 1: Planner Interactivity
+    // ---------------------------------------------------------
+    const planBtn = document.getElementById("pipeline-auto-plan-btn");
+    const timeline = document.getElementById("pipeline-timeline");
+    planBtn?.addEventListener("click", () => {
+        if (!timeline) return;
+        timeline.style.opacity = "0.3";
+        timeline.style.transform = "scale(0.98)";
+        timeline.style.transition = "all 0.25s ease";
+
+        setTimeout(() => {
+            timeline.style.opacity = "1";
+            timeline.style.transform = "scale(1)";
+            planBtn.innerHTML = '<i data-lucide="check"></i><span>Day planned!</span>';
+            if (typeof lucide !== "undefined") lucide.createIcons();
+
+            setTimeout(() => {
+                planBtn.innerHTML = '<i data-lucide="wand-sparkles"></i><span>Plan my day</span>';
+                if (typeof lucide !== "undefined") lucide.createIcons();
+            }, 2200);
+        }, 280);
+    });
+
+    // ---------------------------------------------------------
+    // Pane 2: Focus Room Timer & Audio Interactivity
+    // ---------------------------------------------------------
+    let timerSeconds = 25 * 60;
+    let timerInterval = null;
+    const timerDisplay = document.getElementById("pipeline-timer-display");
+    const timerToggle = document.getElementById("pipeline-timer-toggle");
+    const timerReset = document.getElementById("pipeline-timer-reset");
+    const timerBtnText = document.getElementById("pipeline-timer-btn-text");
+
+    function renderTimer() {
+        const mins = String(Math.floor(timerSeconds / 60)).padStart(2, "0");
+        const secs = String(timerSeconds % 60).padStart(2, "0");
+        if (timerDisplay) {
+            timerDisplay.textContent = `${mins}:${secs}`;
+        }
+    }
+
+    timerToggle?.addEventListener("click", () => {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            if (timerBtnText) timerBtnText.textContent = "Resume timer";
+        } else {
+            timerInterval = setInterval(() => {
+                if (timerSeconds > 0) {
+                    timerSeconds--;
+                    renderTimer();
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    if (timerBtnText) timerBtnText.textContent = "Start timer";
+                }
+            }, 1000);
+            if (timerBtnText) timerBtnText.textContent = "Pause timer";
+        }
+    });
+
+    timerReset?.addEventListener("click", () => {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        timerSeconds = 25 * 60;
+        renderTimer();
+        if (timerBtnText) timerBtnText.textContent = "Start timer";
+    });
+
+    // Ambient sound buttons
+    const soundButtons = document.querySelectorAll("[data-pipeline-sound]");
+    function stopDemoAudio() {
+        stopAmbientSound();
+        soundButtons.forEach(btn => {
+            btn.classList.toggle("is-active", btn.dataset.pipelineSound === "off");
+        });
+    }
+
+    soundButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const soundType = btn.dataset.pipelineSound;
+            soundButtons.forEach(b => b.classList.remove("is-active"));
+            btn.classList.add("is-active");
+
+            if (soundType === "off") {
+                stopAmbientSound();
+            } else {
+                playAmbientSound(soundType);
+            }
+        });
+    });
 }

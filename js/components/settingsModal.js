@@ -3,10 +3,11 @@
 // =========================================================
 
 import { getSavedTheme, applyTheme } from "../theme.js";
-import { getCurrentAccount, updateProfile, changePassword, getTasks, getPlannerSessions, getStudyRoutine, getStudySessions, saveTasks } from "../storage.js";
+import { getCurrentAccount, updateProfile, changePassword } from "../storage.js";
 import { validateEmail, attachEmailInputValidation } from "../validation.js";
 import { showToast } from "./toast.js";
 import { showConfirm } from "./confirmModal.js";
+import { exportBackupData, handleBackupFileSelect } from "../backup.js";
 
 const ACCENT_COLOR_KEY = "studyflow_accent_color";
 const TIMER_PREF_KEY = "studyflow_timer_pref";
@@ -372,45 +373,17 @@ function bindModalEvents() {
     });
 
     // Export Data
-    document.getElementById("settings-export-btn")?.addEventListener("click", () => {
-        const backupData = {
-            tasks: getTasks(),
-            planner: getPlannerSessions(),
-            routine: getStudyRoutine(),
-            sessions: getStudySessions(),
-            exportedAt: new Date().toISOString()
-        };
-
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-        const downloadAnchor = document.createElement("a");
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `studyflow_backup_${new Date().toISOString().slice(0, 10)}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-
-        showToast({ message: "Backup downloaded successfully! 💾", type: "success" });
+    modal.querySelector("#settings-export-btn")?.addEventListener("click", () => {
+        exportBackupData();
     });
 
     // Import Data
-    document.getElementById("settings-import-file")?.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const imported = JSON.parse(event.target.result);
-                if (imported.tasks && Array.isArray(imported.tasks)) {
-                    saveTasks(imported.tasks);
-                }
-                showToast({ message: "Data imported! Reloading page...", type: "success" });
-                setTimeout(() => window.location.reload(), 1200);
-            } catch (err) {
-                showToast({ message: "Invalid backup JSON file", type: "error" });
-            }
-        };
-        reader.readAsText(file);
+    const importInput = modal.querySelector("#settings-import-file");
+    importInput?.addEventListener("change", (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            handleBackupFileSelect(file, importInput);
+        }
     });
 
     // Reset Data

@@ -175,37 +175,287 @@
              HOW STUDYFLOW WORKS — animated 4-step sequence
         ====================================================== -->
 
-        <section class="welcome-workflow-section" data-reveal>
+        <!-- =====================================================
+             THE PIPELINE — Interactive App Walkthrough
+        ====================================================== -->
 
-            <h2 class="welcome-section-heading">How Studyflow works</h2>
+        <section class="welcome-pipeline-section" data-reveal id="welcome-pipeline">
 
-            <ol class="welcome-workflow-list">
+            <div class="welcome-pipeline-header">
+                <span class="welcome-pipeline-eyebrow">The Pipeline</span>
+                <h2 class="welcome-pipeline-title">From first assignment to final exam. In flow.</h2>
+                <p class="welcome-pipeline-subtitle">
+                    See how your schoolwork moves from a scattered list into a calm, focused daily study routine.
+                </p>
+            </div>
 
-                <li class="welcome-workflow-item">
-                    <span class="welcome-workflow-index">01</span>
-                    <h3>Tasks</h3>
-                    <p>Add what you need to do.</p>
-                </li>
+            <div class="pipeline-layout">
 
-                <li class="welcome-workflow-item">
-                    <span class="welcome-workflow-index">02</span>
-                    <h3>Planner</h3>
-                    <p>Decide when you'll do it.</p>
-                </li>
+                <!-- Left Column: Pipeline Steps -->
+                <div class="pipeline-steps">
 
-                <li class="welcome-workflow-item">
-                    <span class="welcome-workflow-index">03</span>
-                    <h3>Study</h3>
-                    <p>Focus on the task at hand.</p>
-                </li>
+                    <button type="button" class="pipeline-step is-active" data-pipeline-step="0">
+                        <span class="step-tag">01 · Capture</span>
+                        <h3>Collect your work</h3>
+                        <p>
+                            Add assignments, tests, and readings. Set deadlines, estimate study time, and prioritize what matters most so nothing slips through.
+                        </p>
+                    </button>
 
-                <li class="welcome-workflow-item">
-                    <span class="welcome-workflow-index">04</span>
-                    <h3>Progress</h3>
-                    <p>See what you've gotten done.</p>
-                </li>
+                    <button type="button" class="pipeline-step" data-pipeline-step="1">
+                        <span class="step-tag">02 · Plan</span>
+                        <h3>Spread your week</h3>
+                        <p>
+                            Turn tasks into a schedule. Let Studyflow automatically build balanced study sessions with built-in breaks so you never cram.
+                        </p>
+                    </button>
 
-            </ol>
+                    <button type="button" class="pipeline-step" data-pipeline-step="2">
+                        <span class="step-tag">03 · Focus</span>
+                        <h3>Lock into deep work</h3>
+                        <p>
+                            Focus on one task at a time. Run customizable Pomodoro timers, drown out distractions with ambient soundscapes, and keep a scratchpad handy.
+                        </p>
+                    </button>
+
+                    <button type="button" class="pipeline-step" data-pipeline-step="3">
+                        <span class="step-tag">04 · Retain & Own</span>
+                        <h3>Watch momentum grow</h3>
+                        <p>
+                            Track completed hours, celebrate consistency streaks, and export your private .json backup anytime with zero cloud lock-in.
+                        </p>
+                    </button>
+
+                </div>
+
+                <!-- Right Column: Interactive App Mockup -->
+                <div class="pipeline-mockup-wrapper">
+
+                    <div class="pipeline-mockup-frame">
+
+                        <div class="pipeline-mockup-chrome">
+                            <div class="pipeline-mockup-dots">
+                                <span class="mockup-dot"></span>
+                                <span class="mockup-dot"></span>
+                                <span class="mockup-dot"></span>
+                            </div>
+                            <div class="pipeline-mockup-address">
+                                <i data-lucide="shield-check" class="mockup-secure-icon"></i>
+                                <span>studyflow.app / workspace</span>
+                            </div>
+                            <div class="pipeline-mockup-badge">Live preview</div>
+                        </div>
+
+                        <div class="pipeline-mockup-body">
+
+                            <!-- Sidebar -->
+                            <div class="pipeline-mockup-sidebar">
+                                <div class="pipeline-mockup-nav">
+                                    <button type="button" class="mockup-nav-btn is-active" data-mockup-tab="0">
+                                        <i data-lucide="check-square"></i>
+                                        <span>Tasks</span>
+                                    </button>
+                                    <button type="button" class="mockup-nav-btn" data-mockup-tab="1">
+                                        <i data-lucide="calendar"></i>
+                                        <span>Planner</span>
+                                    </button>
+                                    <button type="button" class="mockup-nav-btn" data-mockup-tab="2">
+                                        <i data-lucide="timer"></i>
+                                        <span>Study</span>
+                                    </button>
+                                    <button type="button" class="mockup-nav-btn" data-mockup-tab="3">
+                                        <i data-lucide="bar-chart-2"></i>
+                                        <span>Progress</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Screen Panes -->
+                            <div class="pipeline-mockup-content">
+
+                                <!-- Pane 0: Tasks -->
+                                <div class="pipeline-pane is-active" data-pipeline-pane="0">
+                                    <div class="pipeline-pane-header">
+                                        <div>
+                                            <span class="pane-eyebrow">Tasks & Materials</span>
+                                            <h4>Active Assignments</h4>
+                                        </div>
+                                        <span class="pane-badge">3 upcoming</span>
+                                    </div>
+
+                                    <div class="pipeline-task-list">
+                                        <div class="pipeline-task-card" data-pipeline-task>
+                                            <button type="button" class="pipeline-task-checkbox" aria-label="Mark task done"></button>
+                                            <div class="pipeline-task-info">
+                                                <div class="pipeline-task-title">Calculus &mdash; Problem set 5</div>
+                                                <div class="pipeline-task-meta">
+                                                    <span class="task-pill task-subject">Math</span>
+                                                    <span class="task-pill task-time">45 min</span>
+                                                    <button type="button" class="task-pill task-priority priority-high" data-priority-toggle title="Click to cycle priority">High priority</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="pipeline-task-card" data-pipeline-task>
+                                            <button type="button" class="pipeline-task-checkbox" aria-label="Mark task done"></button>
+                                            <div class="pipeline-task-info">
+                                                <div class="pipeline-task-title">World History &mdash; Chapter 12 Notes</div>
+                                                <div class="pipeline-task-meta">
+                                                    <span class="task-pill task-subject">History</span>
+                                                    <span class="task-pill task-time">30 min</span>
+                                                    <button type="button" class="task-pill task-priority priority-med" data-priority-toggle title="Click to cycle priority">Med priority</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="pipeline-task-card" data-pipeline-task>
+                                            <button type="button" class="pipeline-task-checkbox" aria-label="Mark task done"></button>
+                                            <div class="pipeline-task-info">
+                                                <div class="pipeline-task-title">Physics &mdash; Lab Report Draft</div>
+                                                <div class="pipeline-task-meta">
+                                                    <span class="task-pill task-subject">Science</span>
+                                                    <span class="task-pill task-time">60 min</span>
+                                                    <button type="button" class="task-pill task-priority priority-low" data-priority-toggle title="Click to cycle priority">Low priority</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="pipeline-pane-hint">Try it: Check off a task or click a priority badge</p>
+                                </div>
+
+                                <!-- Pane 1: Planner -->
+                                <div class="pipeline-pane" data-pipeline-pane="1">
+                                    <div class="pipeline-pane-header">
+                                        <div>
+                                            <span class="pane-eyebrow">Daily Schedule</span>
+                                            <h4>Today's Planned Routine</h4>
+                                        </div>
+                                        <button type="button" class="pane-action-btn" id="pipeline-auto-plan-btn">
+                                            <i data-lucide="wand-sparkles"></i>
+                                            <span>Plan my day</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="pipeline-schedule-timeline" id="pipeline-timeline">
+                                        <div class="pipeline-time-block">
+                                            <span class="block-time">04:00 PM</span>
+                                            <div class="block-card block-study">
+                                                <strong>Calculus Problem Set</strong>
+                                                <span>Math &bull; 45 min focus</span>
+                                            </div>
+                                        </div>
+                                        <div class="pipeline-time-block">
+                                            <span class="block-time">04:45 PM</span>
+                                            <div class="block-card block-break">
+                                                <strong>Rest & Stretch Break</strong>
+                                                <span>Rest &bull; 10 min</span>
+                                            </div>
+                                        </div>
+                                        <div class="pipeline-time-block">
+                                            <span class="block-time">04:55 PM</span>
+                                            <div class="block-card block-study">
+                                                <strong>World History Chapter 12</strong>
+                                                <span>History &bull; 30 min focus</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="pipeline-pane-hint">Workload is spread out automatically with timed breaks</p>
+                                </div>
+
+                                <!-- Pane 2: Study Focus Room -->
+                                <div class="pipeline-pane" data-pipeline-pane="2">
+                                    <div class="pipeline-pane-header">
+                                        <div>
+                                            <span class="pane-eyebrow">Focus Room</span>
+                                            <h4>Calculus Problem Set</h4>
+                                        </div>
+                                        <span class="pane-status-dot is-active"></span>
+                                    </div>
+
+                                    <div class="pipeline-focus-center">
+                                        <div class="pipeline-timer-dial">
+                                            <span class="pipeline-timer-number" id="pipeline-timer-display">25:00</span>
+                                            <span class="pipeline-timer-label">Focus session</span>
+                                        </div>
+
+                                        <div class="pipeline-timer-controls">
+                                            <button type="button" class="button button-primary button-sm" id="pipeline-timer-toggle">
+                                                <i data-lucide="play" id="pipeline-timer-icon"></i>
+                                                <span id="pipeline-timer-btn-text">Start timer</span>
+                                            </button>
+                                            <button type="button" class="button button-secondary button-sm" id="pipeline-timer-reset">
+                                                Reset
+                                            </button>
+                                        </div>
+
+                                        <div class="pipeline-audio-bar">
+                                            <span class="pipeline-audio-title"><i data-lucide="headphones"></i> Ambient sound:</span>
+                                            <button type="button" class="pipeline-sound-btn" data-pipeline-sound="rain">
+                                                <i data-lucide="cloud-rain"></i> Rain
+                                            </button>
+                                            <button type="button" class="pipeline-sound-btn" data-pipeline-sound="waves">
+                                                <i data-lucide="waves"></i> Ocean
+                                            </button>
+                                            <button type="button" class="pipeline-sound-btn is-active" data-pipeline-sound="off">
+                                                <i data-lucide="volume-x"></i> Off
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="pipeline-pane-hint">Click "Rain" to hear real ambient audio generated in your browser</p>
+                                </div>
+
+                                <!-- Pane 3: Progress & Backups -->
+                                <div class="pipeline-pane" data-pipeline-pane="3">
+                                    <div class="pipeline-pane-header">
+                                        <div>
+                                            <span class="pane-eyebrow">Analytics & Privacy</span>
+                                            <h4>Weekly Momentum</h4>
+                                        </div>
+                                        <span class="pane-badge">This week</span>
+                                    </div>
+
+                                    <div class="pipeline-stats-row">
+                                        <div class="pipeline-stat-card">
+                                            <span class="stat-num">14.5<small>h</small></span>
+                                            <span class="stat-name">Study time</span>
+                                        </div>
+                                        <div class="pipeline-stat-card">
+                                            <span class="stat-num">18</span>
+                                            <span class="stat-name">Tasks done</span>
+                                        </div>
+                                        <div class="pipeline-stat-card">
+                                            <span class="stat-num">5<small>days</small></span>
+                                            <span class="stat-name">Streak 🔥</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pipeline-subject-bar-wrap">
+                                        <div class="pipeline-subject-bar-labels">
+                                            <span>Subject distribution</span>
+                                            <span>100% accounted for</span>
+                                        </div>
+                                        <div class="pipeline-subject-bar">
+                                            <span class="bar-seg seg-math" style="width: 45%" title="Math 45%">Math 45%</span>
+                                            <span class="bar-seg seg-science" style="width: 35%" title="Science 35%">Science 35%</span>
+                                            <span class="bar-seg seg-history" style="width: 20%" title="History 20%">History 20%</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pipeline-privacy-note">
+                                        <i data-lucide="hard-drive"></i>
+                                        <span>All data stays in your browser &bull; Export full <code>.json</code> backup anytime</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </section>
 

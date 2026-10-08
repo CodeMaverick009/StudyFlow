@@ -448,3 +448,145 @@ export function deletePlannerSessionsForDate(date) {
 
     return remaining;
 }
+
+
+// =========================================================
+// QUICK NOTES & BACKUP RESTORE
+// =========================================================
+
+const QUICK_NOTES_KEY = "studyflow_quick_notes";
+
+export function getQuickNotes() {
+    return localStorage.getItem(QUICK_NOTES_KEY) || "";
+}
+
+export function saveQuickNotes(notes) {
+    localStorage.setItem(QUICK_NOTES_KEY, String(notes ?? ""));
+}
+
+export function clearQuickNotes() {
+    localStorage.removeItem(QUICK_NOTES_KEY);
+}
+
+/**
+ * Returns a complete snapshot of all StudyFlow user data for backup.
+ */
+export function getBackupData() {
+    return {
+        version: "1.0",
+        exportedAt: new Date().toISOString(),
+        tasks: getTasks(),
+        planner: getPlannerSessions(),
+        sessions: getStudySessions(),
+        routine: getStudyRoutine(),
+        quickNotes: getQuickNotes()
+    };
+}
+
+/**
+ * Restores or merges backup data into localStorage.
+ * @param {Object|Array} backupData - Full backup object or an array of tasks.
+ * @param {Object} [options]
+ * @param {'replace'|'merge'} [options.mode='replace']
+ * @returns {Object} Result summary
+ */
+export function importBackupData(backupData, { mode = "replace" } = {}) {
+    if (!backupData || (typeof backupData !== "object")) {
+        throw new Error("Invalid backup format: expected an object or array.");
+    }
+
+    // Support standalone task array backups
+    const normalized = Array.isArray(backupData)
+        ? { tasks: backupData }
+        : backupData;
+
+    const summary = {
+        tasksRestored: 0,
+        plannerRestored: 0,
+        sessionsRestored: 0,
+        routineRestored: false,
+        notesRestored: false
+    };
+
+    if (mode === "replace") {
+        if (Array.isArray(normalized.tasks)) {
+            saveTasks(normalized.tasks);
+            summary.tasksRestored = normalized.tasks.length;
+        }
+
+        if (Array.isArray(normalized.planner)) {
+            savePlannerSessions(normalized.planner);
+            summary.plannerRestored = normalized.planner.length;
+        }
+
+        if (Array.isArray(normalized.sessions)) {
+            saveStudySessions(normalized.sessions);
+            summary.sessionsRestored = normalized.sessions.length;
+        }
+
+        if (normalized.routine !== undefined) {
+            if (normalized.routine) {
+                saveStudyRoutine(normalized.routine);
+            } else {
+                clearStudyRoutine();
+            }
+            summary.routineRestored = true;
+        }
+
+        if (typeof normalized.quickNotes === "string") {
+            saveQuickNotes(normalized.quickNotes);
+            summary.notesRestored = true;
+        }
+    } else if (mode === "merge") {
+        // Merge tasks by unique ID
+        if (Array.isArray(normalized.tasks)) {
+            const currentTasks = getTasks();
+            const existingIds = new Set(currentTasks.map(t => String(t.id)));
+            const newTasks = normalized.tasks.filter(t => t && t.id && !existingIds.has(String(t.id)));
+            saveTasks([...currentTasks, ...newTasks]);
+            summary.tasksRestored = newTasks.length;
+        }
+
+        // Merge planner sessions by unique ID or date+title
+        if (Array.isArray(normalized.planner)) {
+            const currentPlanner = getPlannerSessions();
+            const existingKeys = new Set(currentPlanner.map(p => p.id || `${p.date}_${p.title}`));
+            const newPlanner = normalized.planner.filter(p => p && !existingKeys.has(p.id || `${p.date}_${p.title}`));
+            savePlannerSessions([...currentPlanner, ...newPlanner]);
+            summary.plannerRestored = newPlanner.length;
+        }
+
+        // Merge completed study sessions by unique ID or date+timestamp
+        if (Array.isArray(normalized.sessions)) {
+            const currentSessions = getStudySessions();
+            const existingKeys = new Set(currentSessions.map(s => s.id || `${s.date}_${s.completedAt || s.startTime}`));
+            const newSessions = normalized.sessions.filter(s => s && !existingKeys.has(s.id || `${s.date}_${s.completedAt || s.startTime}`));
+            saveStudySessions([...currentSessions, ...newSessions]);
+            summary.sessionsRestored = newSessions.length;
+        }
+
+        // Routine: only adopt if user currently has no routine
+        if (normalized.routine && !getStudyRoutine()) {
+            saveStudyRoutine(normalized.routine);
+            summary.routineRestored = true;
+        }
+
+        // Quick notes: append if both exist, otherwise set if none exists
+        if (typeof normalized.quickNotes === "string" && normalized.quickNotes.trim()) {
+            const currentNotes = getQuickNotes();
+            if (!currentNotes.trim()) {
+                saveQuickNotes(normalized.quickNotes);
+                summary.notesRestored = true;
+            } else if (!currentNotes.includes(normalized.quickNotes.trim())) {
+                saveQuickNotes(`${currentNotes}\n\n--- Restored Notes ---\n${normalized.quickNotes}`);
+                summary.notesRestored = true;
+            }
+        }
+    }
+
+    // Dispatch update events for reactive UI components
+    document.dispatchEvent(new CustomEvent("tasks:changed"));
+    document.dispatchEvent(new CustomEvent("planner:changed"));
+
+    return summary;
+}

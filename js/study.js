@@ -487,6 +487,7 @@ function renderTodayRoutine() {
     const plannerSessions = getPlannerSessions();
     const container = document.getElementById("study-routine-list");
     const emptyState = document.getElementById("study-routine-empty");
+    const routineProgress = document.getElementById("study-routine-progress");
     const today = getLocalDateString();
 
     if (!container) {
@@ -496,10 +497,12 @@ function renderTodayRoutine() {
     if (!routine || routine.date !== today || !routine.items?.length) {
         container.innerHTML = "";
         emptyState?.removeAttribute("hidden");
+        if (routineProgress) routineProgress.hidden = true;
         renderRoutineProgress();
         return;
     }
 
+    if (routineProgress) routineProgress.hidden = false;
     emptyState?.setAttribute("hidden", "");
     container.innerHTML = routine.items.map(item => {
         const plannerSession = plannerSessions.find(session => session.id === item.id);
