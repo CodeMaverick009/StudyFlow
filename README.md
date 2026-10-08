@@ -187,31 +187,6 @@ StudyFlow/
 └── README.md
 ```
 
-## Getting Started
-
-### Clone the repository
-
-```bash
-git clone https://github.com/CodeMaverick009/StudyFlow.git
-```
-
-### Open the project
-
-Open the project folder in Visual Studio Code or another code editor.
-
-### Run the project locally
-
-Because StudyFlow uses JavaScript modules, it is recommended to run the project using a local development server.
-
-For Visual Studio Code:
-
-1. Install the Live Server extension.
-2. Open the StudyFlow project.
-3. Open `welcome.html`.
-4. Select **Go Live**.
-
-StudyFlow will then open in your browser.
-
 ## Live Website
 
 **StudyFlow:**  
@@ -230,7 +205,7 @@ Possible future improvements include:
 - Calendar integrations
 - Personalized study recommendations
 
-These features are not part of the current core implementation.
+**These features are not part of the current core implementation.**
 
 ## Project Goal
 
