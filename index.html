@@ -381,9 +381,10 @@
                             id="task-name"
                             name="name"
                             placeholder="e.g. Physics test"
+                            maxlength="35"
                             required
                         >
-
+                        <span class="char-counter" data-for="task-name">Max 35 characters</span>
                     </div>
 
 
@@ -601,8 +602,9 @@
                             name="description"
                             rows="3"
                             placeholder="Add any details you need..."
+                            maxlength="500"
                         ></textarea>
-
+                        <span class="char-counter" data-for="task-description">Max 500 characters</span>
                     </div>
 
                 </div>

@@ -199,7 +199,6 @@
                             Create a study plan based on your tasks
                             and available time.
                         </p>
-
                         <button
                             type="button"
                             class="button button-primary"
@@ -486,10 +485,21 @@
                         <i data-lucide="headphones"></i>
                     </div>
                     <div class="ambient-controls">
-                        <button type="button" class="ambient-btn" data-sound="rain"><i data-lucide="cloud-rain"></i> Rain</button>
-                        <button type="button" class="ambient-btn" data-sound="waves"><i data-lucide="waves"></i> Ocean</button>
-                        <button type="button" class="ambient-btn" data-sound="whitenoise"><i data-lucide="radio"></i> Noise</button>
-                        <button type="button" class="ambient-btn is-active" data-sound="off"><i data-lucide="volume-x"></i> Off</button>
+                        <button type="button" class="ambient-btn" data-sound="focus-flow" title="Play Focus Flow">
+                            <i data-lucide="sparkles"></i> <span>Focus Flow</span>
+                        </button>
+                        <button type="button" class="ambient-btn" data-sound="study-session" title="Play Study Session">
+                            <i data-lucide="book-open"></i> <span>Study Session</span>
+                        </button>
+                        <button type="button" class="ambient-btn" data-sound="deep-focus" title="Play Deep Focus">
+                            <i data-lucide="mountain"></i> <span>Deep Focus</span>
+                        </button>
+                        <button type="button" class="ambient-btn" data-sound="lofi-focus" title="Play Lofi Focus">
+                            <i data-lucide="coffee"></i> <span>Lofi Focus</span>
+                        </button>
+                        <button type="button" class="ambient-btn is-active" data-sound="off" title="Turn sound off">
+                            <i data-lucide="volume-x"></i> <span>Off</span>
+                        </button>
                     </div>
                     <div class="ambient-volume-slider">
                         <i data-lucide="volume-2"></i>
@@ -735,6 +745,117 @@
 
         </div>
 
+    </div>
+
+
+    <!-- =====================================================
+         STUDY SETTINGS MODAL
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="study-settings-modal"
+        aria-hidden="true"
+    >
+        <div
+            class="modal-backdrop"
+            data-close-study-settings
+        ></div>
+
+        <section
+            class="modal-dialog study-settings-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="study-settings-title"
+        >
+            <div class="modal-header">
+                <div>
+                    <p class="modal-eyebrow">Preferences</p>
+                    <h2 id="study-settings-title">Study settings</h2>
+                    <p class="modal-description">Customize your timer, breaks, and focus environment.</p>
+                </div>
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="study-settings-close"
+                    aria-label="Close"
+                    data-close-study-settings
+                >
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <form id="study-settings-form">
+                <div class="modal-body">
+                    <div class="form-field form-field-full">
+                        <label for="study-pref-duration">Default Focus Session Length</label>
+                        <select id="study-pref-duration" class="form-control">
+                            <option value="25">25 minutes (Pomodoro)</option>
+                            <option value="45">45 minutes (Standard)</option>
+                            <option value="60">60 minutes (Deep Focus)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="study-pref-short-break">Short Break Duration</label>
+                            <select id="study-pref-short-break" class="form-control">
+                                <option value="5">5 minutes</option>
+                                <option value="10">10 minutes</option>
+                                <option value="15">15 minutes</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="study-pref-long-break">Long Break Duration</label>
+                            <select id="study-pref-long-break" class="form-control">
+                                <option value="15">15 minutes</option>
+                                <option value="20">20 minutes</option>
+                                <option value="30">30 minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field form-field-full">
+                        <label for="study-pref-ambient">Default Background Music</label>
+                        <select id="study-pref-ambient" class="form-control">
+                            <option value="off">Off (Silent)</option>
+                            <option value="focus-flow">Focus Flow</option>
+                            <option value="study-session">Study Session</option>
+                            <option value="deep-focus">Deep Focus</option>
+                            <option value="lofi-focus">Lofi Focus</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field form-field-full" style="margin-bottom: 8px;">
+                        <label for="study-pref-chime" class="settings-toggle-row" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; user-select: none;">
+                            <div>
+                                <strong style="display: block; font-size: 0.875rem; color: var(--text-primary); margin-bottom: 2px;">Timer Completion Chime</strong>
+                                <span style="font-size: 0.78rem; color: var(--text-muted);">Play an audio chime when the focus timer ends</span>
+                            </div>
+                            <input type="checkbox" id="study-pref-chime" checked style="cursor: pointer;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="button button-secondary"
+                        data-close-study-settings
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        class="button button-primary"
+                    >
+                        <i data-lucide="check"></i>
+                        <span>Save settings</span>
+                    </button>
+                </div>
+            </form>
+        </section>
     </div>
 
 

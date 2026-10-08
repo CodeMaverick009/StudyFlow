@@ -1067,6 +1067,22 @@
         var(--accent-soft);
 }
 
+/* Character maximum limit indicator for text boxes */
+.char-counter {
+    display: block;
+    align-self: flex-end;
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.2;
+    margin-top: 3px;
+    margin-bottom: 2px;
+    text-align: right;
+    user-select: none;
+    pointer-events: none;
+}
+
 
 /* Footer */
 
@@ -3822,7 +3838,7 @@
 
 .ambient-controls {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
     gap: 8px;
     margin-top: 14px;
     margin-bottom: 14px;
@@ -4342,6 +4358,31 @@
 .settings-modal-dialog {
     max-width: 680px;
     width: 100%;
+}
+
+.study-settings-dialog {
+    max-width: 520px;
+    width: 100%;
+}
+
+.modal-dialog form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+}
+
+.study-settings-dialog .modal-body {
+    padding: 20px 24px;
+}
+
+.study-settings-dialog .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-light);
 }
 
 .settings-layout {

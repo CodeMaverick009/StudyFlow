@@ -1,6 +1,7 @@
 import { getTasks, addTask, updateTask, deleteTask } from "./storage.js";
 import { showToast } from "./components/toast.js";
 import { showConfirm } from "./components/confirmModal.js";
+import { validateTaskName, validateTaskDescription, updateCharCounters } from "./validation.js";
 
 let allTasks = [];
 let editorSubtasks = [];
@@ -76,6 +77,7 @@ function closeTaskEditor() {
     editorSubtasks = [];
     editorMaterials = [];
     editingTaskId = null;
+    updateCharCounters(modal);
 }
 
 function renderTasks() {
@@ -283,6 +285,7 @@ function openTaskEditor(taskId = null) {
     }
     renderEditorSubtasks();
     renderEditorMaterials();
+    updateCharCounters(modal);
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
@@ -332,15 +335,32 @@ function renderEditorMaterials() {
 
 function createTaskFromEditor(form) {
     const formData = new FormData(form);
+    const rawName = formData.get("name");
+    const rawDescription = formData.get("description");
+
+    const nameValidation = validateTaskName(rawName);
+    if (!nameValidation.isValid) {
+        showToast({ message: nameValidation.error, type: "error" });
+        document.getElementById("editor-task-name")?.focus();
+        return;
+    }
+
+    const descValidation = validateTaskDescription(rawDescription);
+    if (!descValidation.isValid) {
+        showToast({ message: descValidation.error, type: "error" });
+        document.getElementById("editor-task-description")?.focus();
+        return;
+    }
+
     const taskData = {
-        name: formData.get("name").trim(),
+        name: nameValidation.value,
         subject: formData.get("subject").trim(),
         type: formData.get("type"),
         dueDate: formData.get("dueDate"),
         estimatedMinutes: Number(formData.get("estimatedMinutes")),
         difficulty: formData.get("difficulty"),
         priority: formData.get("priority") || "Normal",
-        description: formData.get("description").trim(),
+        description: descValidation.value,
         subtasks: editorSubtasks.filter(subtask => subtask.text.trim()).map(subtask => ({ ...subtask, text: subtask.text.trim(), completed: subtask.completed === true })),
         materials: editorMaterials.filter(material => material.name.trim()).map(material => ({ ...material, name: material.name.trim(), url: material.url.trim() })),
     };

@@ -23,6 +23,7 @@ import { initializeSettingsPage } from "./settings.js";
 import { initializeCommandPalette, openCommandPalette } from "./components/command-palette.js";
 import { initializeSettingsModal } from "./components/settingsModal.js";
 import { showToast } from "./components/toast.js";
+import { validateTaskName, validateTaskDescription, initCharCounters, updateCharCounters } from "./validation.js";
 
 let currentAccount = null;
 
@@ -67,6 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("planner:changed", initializeDashboard);
 
     console.log("Studyflow initialized");
+    initCharCounters();
 });
 
 
@@ -480,6 +482,7 @@ function openQuickAddModal() {
     document.body.classList.add("modal-open");
 
     const firstInput = document.getElementById("task-name");
+    updateCharCounters(modal);
 
     setTimeout(() => {
         firstInput?.focus();
@@ -497,14 +500,31 @@ function closeQuickAddModal() {
     document.body.classList.remove("modal-open");
 
     form?.reset();
+    updateCharCounters(modal);
 }
 function createTaskFromForm(form) {
     const formData = new FormData(form);
+    const rawName = formData.get("name");
+    const rawDescription = formData.get("description");
+
+    const nameValidation = validateTaskName(rawName);
+    if (!nameValidation.isValid) {
+        showToast({ message: nameValidation.error, type: "error" });
+        form.querySelector("#task-name")?.focus();
+        return;
+    }
+
+    const descValidation = validateTaskDescription(rawDescription);
+    if (!descValidation.isValid) {
+        showToast({ message: descValidation.error, type: "error" });
+        form.querySelector("#task-description")?.focus();
+        return;
+    }
 
     const task = {
         id: crypto.randomUUID(),
 
-        name: formData.get("name").trim(),
+        name: nameValidation.value,
 
         subject: formData.get("subject").trim(),
 
@@ -520,8 +540,7 @@ function createTaskFromForm(form) {
 
         priority: formData.get("priority") || "Normal",
 
-        description:
-            formData.get("description").trim(),
+        description: descValidation.value,
 
         completed: false,
 

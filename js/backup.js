@@ -33,7 +33,7 @@ export function exportBackupData() {
         anchor.remove();
 
         URL.revokeObjectURL(url);
-        showToast({ message: "Backup downloaded successfully! 💾", type: "success" });
+        showToast({ message: "Backup downloaded successfully!", type: "success" });
     } catch (error) {
         console.error("Backup export failed:", error);
         showToast({ message: "Failed to export backup file.", type: "error" });

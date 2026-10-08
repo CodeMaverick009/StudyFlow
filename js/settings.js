@@ -4,7 +4,7 @@
 
 import { getSavedTheme, applyTheme } from "./theme.js";
 import { getCurrentAccount, updateProfile, changePassword } from "./storage.js";
-import { validateEmail, attachEmailInputValidation } from "./validation.js";
+import { validateEmail, attachEmailInputValidation, validateUsername, validatePassword } from "./validation.js";
 import { showToast } from "./components/toast.js";
 import { showConfirm } from "./components/confirmModal.js";
 import { exportBackupData, handleBackupFileSelect } from "./backup.js";
@@ -12,6 +12,8 @@ import { exportBackupData, handleBackupFileSelect } from "./backup.js";
 const ACCENT_COLOR_KEY = "studyflow_accent_color";
 const TIMER_PREF_KEY = "studyflow_timer_pref";
 const CHIME_PREF_KEY = "studyflow_chime_pref";
+const SHORT_BREAK_KEY = "studyflow_short_break_pref";
+const LONG_BREAK_KEY = "studyflow_long_break_pref";
 
 export function applyAccentColor(colorValue = null) {
     const savedColor = colorValue || localStorage.getItem(ACCENT_COLOR_KEY);
@@ -36,6 +38,8 @@ function loadSettingsValues() {
     const currentTheme = getSavedTheme();
     const activeColor = localStorage.getItem(ACCENT_COLOR_KEY) || "#727966";
     const defaultTimer = localStorage.getItem(TIMER_PREF_KEY) || "25";
+    const shortBreak = localStorage.getItem(SHORT_BREAK_KEY) || "5";
+    const longBreak = localStorage.getItem(LONG_BREAK_KEY) || "15";
     const chimeEnabled = localStorage.getItem(CHIME_PREF_KEY) !== "false";
 
     // Populate inputs
@@ -49,8 +53,12 @@ function loadSettingsValues() {
 
     // Timer selects
     const durationSelect = document.getElementById("settings-default-duration");
+    const shortBreakSelect = document.getElementById("settings-short-break");
+    const longBreakSelect = document.getElementById("settings-long-break");
     const chimeToggle = document.getElementById("settings-chime-toggle");
     if (durationSelect) durationSelect.value = defaultTimer;
+    if (shortBreakSelect) shortBreakSelect.value = shortBreak;
+    if (longBreakSelect) longBreakSelect.value = longBreak;
     if (chimeToggle) chimeToggle.checked = chimeEnabled;
 
     // Theme buttons
@@ -113,6 +121,16 @@ function bindSettingsEvents() {
         showToast({ message: "Default study duration updated", type: "success" });
     });
 
+    document.getElementById("settings-short-break")?.addEventListener("change", (e) => {
+        localStorage.setItem(SHORT_BREAK_KEY, e.target.value);
+        showToast({ message: "Short break duration updated", type: "success" });
+    });
+
+    document.getElementById("settings-long-break")?.addEventListener("change", (e) => {
+        localStorage.setItem(LONG_BREAK_KEY, e.target.value);
+        showToast({ message: "Long break duration updated", type: "success" });
+    });
+
     document.getElementById("settings-chime-toggle")?.addEventListener("change", (e) => {
         localStorage.setItem(CHIME_PREF_KEY, e.target.checked ? "true" : "false");
         showToast({ message: e.target.checked ? "Chimes enabled" : "Chimes disabled", type: "info" });
@@ -124,6 +142,13 @@ function bindSettingsEvents() {
         const emailInput = document.getElementById("settings-profile-email");
         const rawEmail = emailInput?.value || "";
 
+        const nameValidation = validateUsername(nameInput?.value);
+        if (!nameValidation.isValid) {
+            nameInput?.focus();
+            showToast({ message: nameValidation.error, type: "error" });
+            return;
+        }
+
         const emailValidation = validateEmail(rawEmail);
         if (!emailValidation.isValid) {
             emailInput?.classList.add("input-invalid");
@@ -134,7 +159,7 @@ function bindSettingsEvents() {
 
         try {
             updateProfile({
-                name: nameInput?.value,
+                name: nameValidation.value,
                 email: emailValidation.normalizedEmail
             });
             emailInput?.classList.remove("input-invalid");
@@ -159,8 +184,10 @@ function bindSettingsEvents() {
             return;
         }
 
-        if (!newPassword || newPassword.length < 8) {
-            showToast({ message: "New password must be at least 8 characters long", type: "error" });
+        const passwordValidation = validatePassword(newPassword);
+        if (!passwordValidation.isValid) {
+            showToast({ message: passwordValidation.error, type: "error" });
+            newPasswordInput?.focus();
             return;
         }
 

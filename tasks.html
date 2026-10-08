@@ -73,7 +73,8 @@
                 <div class="modal-body">
                     <div class="form-field form-field-full">
                         <label for="task-name">Task name</label>
-                        <input type="text" id="task-name" name="name" placeholder="e.g. Physics test" required>
+                        <input type="text" id="task-name" name="name" placeholder="e.g. Physics test" maxlength="35" required>
+                        <span class="char-counter" data-for="task-name">Max 35 characters</span>
                     </div>
                     <div class="form-grid">
                         <div class="form-field"><label for="task-subject">Subject</label><input type="text" id="task-subject" name="subject" placeholder="e.g. Physics" required></div>
@@ -87,7 +88,7 @@
                         <div class="form-field"><label for="task-difficulty">Difficulty</label><select id="task-difficulty" name="difficulty" required><option value="">Select difficulty</option><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select></div>
                         <div class="form-field"><label for="task-priority">Priority</label><select id="task-priority" name="priority"><option value="Normal">Normal</option><option value="High">High</option><option value="Low">Low</option></select></div>
                     </div>
-                    <div class="form-field form-field-full"><label for="task-description">Description <span class="optional">Optional</span></label><textarea id="task-description" name="description" rows="3" placeholder="Add any details you need..."></textarea></div>
+                    <div class="form-field form-field-full"><label for="task-description">Description <span class="optional">Optional</span></label><textarea id="task-description" name="description" rows="3" placeholder="Add any details you need..." maxlength="500"></textarea><span class="char-counter" data-for="task-description">Max 500 characters</span></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="button button-secondary" data-close-modal>Cancel</button>
@@ -106,7 +107,7 @@
             </div>
             <form id="task-editor-form">
                 <div class="modal-body">
-                    <div class="form-field form-field-full"><label for="editor-task-name">Task name</label><input type="text" id="editor-task-name" name="name" placeholder="e.g. Physics test" required></div>
+                    <div class="form-field form-field-full"><label for="editor-task-name">Task name</label><input type="text" id="editor-task-name" name="name" placeholder="e.g. Physics test" maxlength="35" required><span class="char-counter" data-for="editor-task-name">Max 35 characters</span></div>
                     <div class="form-grid">
                         <div class="form-field"><label for="editor-task-subject">Subject</label><input type="text" id="editor-task-subject" name="subject" placeholder="e.g. Physics" required></div>
                         <div class="form-field"><label for="editor-task-type">Type</label><select id="editor-task-type" name="type" required><option value="">Select type</option><option value="Homework">Homework</option><option value="Assignment">Assignment</option><option value="Test">Test</option><option value="Project">Project</option><option value="Other">Other</option></select></div>
@@ -119,7 +120,7 @@
                         <div class="form-field"><label for="editor-task-difficulty">Difficulty</label><select id="editor-task-difficulty" name="difficulty" required><option value="">Select difficulty</option><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select></div>
                         <div class="form-field"><label for="editor-task-priority">Priority</label><select id="editor-task-priority" name="priority"><option value="Normal">Normal</option><option value="High">High</option><option value="Low">Low</option></select></div>
                     </div>
-                    <div class="form-field form-field-full"><label for="editor-task-description">Description <span class="optional">Optional</span></label><textarea id="editor-task-description" name="description" rows="4" placeholder="Add instructions, notes, or other details..."></textarea></div>
+                    <div class="form-field form-field-full"><label for="editor-task-description">Description <span class="optional">Optional</span></label><textarea id="editor-task-description" name="description" rows="4" placeholder="Add instructions, notes, or other details..." maxlength="500"></textarea><span class="char-counter" data-for="editor-task-description">Max 500 characters</span></div>
                     <div class="editor-section">
                         <div class="editor-section-header"><div><h3>Subtasks</h3><p>Break this task into smaller steps.</p></div><button type="button" class="button button-secondary button-small" id="add-subtask-button"><i data-lucide="plus"></i>Add subtask</button></div>
                         <div id="subtasks-list" class="subtasks-list"></div>

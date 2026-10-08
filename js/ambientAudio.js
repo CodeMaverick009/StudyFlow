@@ -1,13 +1,42 @@
 // =========================================================
-// STUDYFLOW — WEB AUDIO AMBIENT SOUND GENERATOR
+// STUDYFLOW — AMBIENT FOCUS AUDIO PLAYER & GENERATOR
 // =========================================================
-// Generates procedural ambient sounds (Rain, Waves, White Noise)
-// completely using browser AudioContext without external audio files.
+// Supports high quality MP3 focus tracks and procedural Web Audio fallbacks.
 
-let audioCtx = null;
-let activeSound = null;
-let masterGain = null;
+export const AMBIENT_TRACKS = {
+    "focus-flow": {
+        id: "focus-flow",
+        name: "Focus Flow",
+        src: "audio/leberch-study-580088.mp3"
+    },
+    "study-session": {
+        id: "study-session",
+        name: "Study Session",
+        src: "audio/luceris-study-session-602503.mp3"
+    },
+    "deep-focus": {
+        id: "deep-focus",
+        name: "Deep Focus",
+        src: "audio/the_mountain-study-music-602501.mp3"
+    },
+    "lofi-focus": {
+        id: "lofi-focus",
+        name: "Lofi Focus",
+        src: "audio/Homepage Music.mp3"
+    }
+};
+
+// Aliases
+AMBIENT_TRACKS["homepage-music"] = AMBIENT_TRACKS["lofi-focus"];
+
+let currentAudio = null;
+let currentTrackId = null;
 let currentVolume = 0.4;
+
+// Procedural fallback audio context
+let audioCtx = null;
+let activeProceduralSound = null;
+let masterGain = null;
 
 function initAudioContext() {
     if (!audioCtx) {
@@ -25,39 +54,96 @@ function initAudioContext() {
 }
 
 /**
- * Start playing a procedural ambient sound.
- * @param {'rain'|'waves'|'whitenoise'} soundType 
+ * Start playing an ambient audio track or procedural sound.
+ * @param {'focus-flow'|'study-session'|'deep-focus'|'rain'|'waves'|'whitenoise'} soundType 
  */
 export function playAmbientSound(soundType) {
+    stopAmbientSound();
+
+    // 1. Play real MP3 track if matched
+    if (AMBIENT_TRACKS[soundType]) {
+        currentTrackId = soundType;
+        const track = AMBIENT_TRACKS[soundType];
+        
+        currentAudio = new Audio(track.src);
+        currentAudio.loop = true;
+        currentAudio.volume = currentVolume;
+        
+        const playPromise = currentAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(err => {
+                console.warn(`Playback prevented or interrupted for "${track.name}":`, err);
+            });
+        }
+        return;
+    }
+
+    // 2. Fallback procedural Web Audio generators
     initAudioContext();
     if (!audioCtx) return;
 
-    stopAmbientSound();
-
     if (soundType === "rain") {
-        activeSound = createRainSound();
+        activeProceduralSound = createRainSound();
+        currentTrackId = soundType;
     } else if (soundType === "waves") {
-        activeSound = createOceanWavesSound();
+        activeProceduralSound = createOceanWavesSound();
+        currentTrackId = soundType;
     } else if (soundType === "whitenoise") {
-        activeSound = createWhiteNoiseSound();
+        activeProceduralSound = createWhiteNoiseSound();
+        currentTrackId = soundType;
     }
 }
 
+/**
+ * Stop any currently playing ambient sound.
+ */
 export function stopAmbientSound() {
-    if (activeSound) {
-        if (activeSound.stop) {
-            activeSound.stop();
-        }
-        activeSound = null;
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
     }
+
+    if (activeProceduralSound) {
+        if (activeProceduralSound.stop) {
+            try {
+                activeProceduralSound.stop();
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+        activeProceduralSound = null;
+    }
+
+    currentTrackId = null;
 }
 
+/**
+ * Adjust the volume of the ambient sound.
+ * @param {number|string} val Between 0 and 1
+ */
 export function setAmbientVolume(val) {
     currentVolume = Math.max(0, Math.min(1, parseFloat(val)));
+    
+    if (currentAudio) {
+        currentAudio.volume = currentVolume;
+    }
+    
     if (masterGain && audioCtx) {
         masterGain.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
     }
 }
+
+/**
+ * Return current active track ID.
+ */
+export function getCurrentTrack() {
+    return currentTrackId;
+}
+
+// -------------------------------------------------------------
+// Procedural Web Audio Generators (Fallbacks)
+// -------------------------------------------------------------
 
 function createNoiseBuffer() {
     const bufferSize = audioCtx.sampleRate * 3; // 3 seconds loop buffer
@@ -75,7 +161,6 @@ function createRainSound() {
     whiteNoise.buffer = noiseBuffer;
     whiteNoise.loop = true;
 
-    // Filter to simulate soft patter of rain
     const filter = audioCtx.createBiquadFilter();
     filter.type = "lowpass";
     filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
@@ -102,9 +187,8 @@ function createOceanWavesSound() {
     const filter = audioCtx.createBiquadFilter();
     filter.type = "lowpass";
 
-    // LFO to modulate wave swells back and forth every ~6 seconds
     const lfo = audioCtx.createOscillator();
-    lfo.frequency.setValueAtTime(0.15, audioCtx.currentTime); // 0.15 Hz
+    lfo.frequency.setValueAtTime(0.15, audioCtx.currentTime);
 
     const lfoGain = audioCtx.createGain();
     lfoGain.gain.setValueAtTime(400, audioCtx.currentTime);

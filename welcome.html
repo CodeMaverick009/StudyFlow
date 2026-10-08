@@ -389,19 +389,16 @@
                                         </div>
 
                                         <div class="pipeline-audio-bar">
-                                            <span class="pipeline-audio-title"><i data-lucide="headphones"></i> Ambient sound:</span>
-                                            <button type="button" class="pipeline-sound-btn" data-pipeline-sound="rain">
-                                                <i data-lucide="cloud-rain"></i> Rain
-                                            </button>
-                                            <button type="button" class="pipeline-sound-btn" data-pipeline-sound="waves">
-                                                <i data-lucide="waves"></i> Ocean
+                                            <span class="pipeline-audio-title"><i data-lucide="headphones"></i> Focus music:</span>
+                                            <button type="button" class="pipeline-sound-btn" data-pipeline-sound="lofi-focus">
+                                                <i data-lucide="music"></i> Lofi Focus
                                             </button>
                                             <button type="button" class="pipeline-sound-btn is-active" data-pipeline-sound="off">
                                                 <i data-lucide="volume-x"></i> Off
                                             </button>
                                         </div>
                                     </div>
-                                    <p class="pipeline-pane-hint">Click "Rain" to hear real ambient audio generated in your browser</p>
+                                    <p class="pipeline-pane-hint">Click "Lofi Focus" to hear relaxing music while studying</p>
                                 </div>
 
                                 <!-- Pane 3: Progress & Backups -->
@@ -425,7 +422,7 @@
                                         </div>
                                         <div class="pipeline-stat-card">
                                             <span class="stat-num">5<small>days</small></span>
-                                            <span class="stat-name">Streak 🔥</span>
+                                            <span class="stat-name">Streak</span>
                                         </div>
                                     </div>
 
@@ -569,7 +566,8 @@
 
                     <div class="form-field form-field-full">
                         <label for="signup-name">Name</label>
-                        <input type="text" id="signup-name" name="name" placeholder="e.g. Alex Rivera" required>
+                        <input type="text" id="signup-name" name="name" placeholder="e.g. Alex Rivera" maxlength="20" required>
+                        <span class="char-counter" data-for="signup-name">Max 20 characters</span>
                     </div>
 
                     <div class="form-field form-field-full">
@@ -579,7 +577,8 @@
 
                     <div class="form-field form-field-full">
                         <label for="signup-password">Password</label>
-                        <input type="password" id="signup-password" name="password" placeholder="At least 8 characters" minlength="8" required>
+                        <input type="password" id="signup-password" name="password" placeholder="8 to 30 characters" minlength="8" maxlength="30" required>
+                        <span class="char-counter" data-for="signup-password">Max 30 characters</span>
                     </div>
 
                     <p class="auth-error" id="signup-error" role="alert" hidden></p>
@@ -632,7 +631,8 @@
 
                     <div class="form-field form-field-full">
                         <label for="login-password">Password</label>
-                        <input type="password" id="login-password" name="password" required>
+                        <input type="password" id="login-password" name="password" maxlength="30" required>
+                        <span class="char-counter" data-for="login-password">Max 30 characters</span>
                     </div>
 
                     <p class="auth-error" id="login-error" role="alert" hidden></p>

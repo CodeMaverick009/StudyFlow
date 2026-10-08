@@ -15,6 +15,7 @@ import {
 import { playAmbientSound, stopAmbientSound, setAmbientVolume } from "./ambientAudio.js";
 import { showToast } from "./components/toast.js";
 import { showConfirm } from "./components/confirmModal.js";
+import { openSettingsModal } from "./components/settingsModal.js";
 
 
 // =========================================================
@@ -42,6 +43,7 @@ export function initializeStudy() {
     initializeDurationSelector();
     initializeStudyTimeDropdowns();
     initializePlanModal();
+    initializeStudySettingsModal();
     initializeStudyButtons();
     initializeAmbientAudioControls();
     initializeQuickNotes();
@@ -125,6 +127,16 @@ function initializeDurationSelector() {
 
     const customInput =
         document.getElementById("study-custom-duration-input");
+
+    // Pre-select saved default duration preference if present
+    const savedDuration = localStorage.getItem("studyflow_timer_pref");
+    if (savedDuration && ["25", "45", "60"].includes(savedDuration)) {
+        selectedDuration = Number(savedDuration);
+        durationButtons.forEach(button => {
+            const isMatch = button.dataset.duration === savedDuration;
+            button.classList.toggle("is-selected", isMatch);
+        });
+    }
 
     durationButtons.forEach(button => {
         button.addEventListener("click", () => {
@@ -1018,6 +1030,127 @@ function initializeStudyButtons() {
         ?.addEventListener("click", finishStudySession);
 }
 
+// =========================================================
+// STUDY SETTINGS MODAL
+// =========================================================
+
+function initializeStudySettingsModal() {
+    const modal = document.getElementById("study-settings-modal");
+    const openBtn = document.getElementById("study-settings-button");
+    const form = document.getElementById("study-settings-form");
+    if (!modal) return;
+
+    const durationSelect = document.getElementById("study-pref-duration");
+    const shortBreakSelect = document.getElementById("study-pref-short-break");
+    const longBreakSelect = document.getElementById("study-pref-long-break");
+    const ambientSelect = document.getElementById("study-pref-ambient");
+    const chimeToggle = document.getElementById("study-pref-chime");
+
+    const loadModalValues = () => {
+        if (durationSelect) durationSelect.value = localStorage.getItem("studyflow_timer_pref") || "25";
+        if (shortBreakSelect) shortBreakSelect.value = localStorage.getItem("studyflow_short_break_pref") || "5";
+        if (longBreakSelect) longBreakSelect.value = localStorage.getItem("studyflow_long_break_pref") || "15";
+        if (ambientSelect) ambientSelect.value = localStorage.getItem("studyflow_ambient_sound") || "off";
+        if (chimeToggle) chimeToggle.checked = localStorage.getItem("studyflow_chime_pref") !== "false";
+    };
+
+    const openSettings = () => {
+        loadModalValues();
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+            lucide.createIcons();
+        }
+    };
+
+    const closeSettings = () => {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+    };
+
+    openBtn?.addEventListener("click", openSettings);
+
+    modal.querySelectorAll("[data-close-study-settings]").forEach(el => {
+        el.addEventListener("click", closeSettings);
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.classList.contains("is-open")) {
+            closeSettings();
+        }
+    });
+
+    // Instant auto-save and preview on change
+    chimeToggle?.addEventListener("change", () => {
+        const isChecked = chimeToggle.checked;
+        localStorage.setItem("studyflow_chime_pref", isChecked ? "true" : "false");
+        if (isChecked) {
+            playTimerChime();
+            showToast({ message: "Timer chime enabled", type: "info" });
+        } else {
+            showToast({ message: "Timer chime disabled", type: "info" });
+        }
+    });
+
+    durationSelect?.addEventListener("change", () => {
+        const val = durationSelect.value;
+        localStorage.setItem("studyflow_timer_pref", val);
+        selectedDuration = Number(val);
+        document.querySelectorAll(".study-duration-option").forEach(btn => {
+            btn.classList.toggle("is-selected", btn.dataset.duration === val);
+        });
+        showToast({ message: `Default timer set to ${val} min`, type: "success" });
+    });
+
+    shortBreakSelect?.addEventListener("change", () => {
+        localStorage.setItem("studyflow_short_break_pref", shortBreakSelect.value);
+    });
+
+    longBreakSelect?.addEventListener("change", () => {
+        localStorage.setItem("studyflow_long_break_pref", longBreakSelect.value);
+    });
+
+    ambientSelect?.addEventListener("change", () => {
+        localStorage.setItem("studyflow_ambient_sound", ambientSelect.value);
+        const targetBtn = document.querySelector(`.ambient-btn[data-sound="${ambientSelect.value}"]`);
+        if (targetBtn) targetBtn.click();
+    });
+
+    form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const durationVal = durationSelect?.value || "25";
+        const shortBreakVal = shortBreakSelect?.value || "5";
+        const longBreakVal = longBreakSelect?.value || "15";
+        const ambientVal = ambientSelect?.value || "off";
+        const chimeVal = chimeToggle ? String(chimeToggle.checked) : "true";
+
+        localStorage.setItem("studyflow_timer_pref", durationVal);
+        localStorage.setItem("studyflow_short_break_pref", shortBreakVal);
+        localStorage.setItem("studyflow_long_break_pref", longBreakVal);
+        localStorage.setItem("studyflow_ambient_sound", ambientVal);
+        localStorage.setItem("studyflow_chime_pref", chimeVal);
+
+        // Update current study duration on page
+        selectedDuration = Number(durationVal);
+        const durationButtons = document.querySelectorAll(".study-duration-option");
+        durationButtons.forEach(btn => {
+            btn.classList.toggle("is-selected", btn.dataset.duration === durationVal);
+        });
+
+        // Trigger ambient sound change if desired
+        const targetAmbientBtn = document.querySelector(`.ambient-btn[data-sound="${ambientVal}"]`);
+        if (targetAmbientBtn) {
+            targetAmbientBtn.click();
+        }
+
+        closeSettings();
+        showToast({ message: "Study settings saved successfully", type: "success" });
+    });
+}
+
 function initializeAmbientAudioControls() {
     const buttons = document.querySelectorAll(".ambient-btn");
     const volumeInput = document.getElementById("ambient-vol-range");
@@ -1044,16 +1177,28 @@ function initializeAmbientAudioControls() {
 
     buttons.forEach(btn => {
         btn.addEventListener("click", () => {
+            const sound = btn.dataset.sound;
+            const isAlreadyActive = btn.classList.contains("is-active") && sound !== "off";
+
+            if (isAlreadyActive) {
+                stopAmbientSound();
+                buttons.forEach(b => b.classList.remove("is-active"));
+                const offBtn = document.querySelector('.ambient-btn[data-sound="off"]');
+                if (offBtn) offBtn.classList.add("is-active");
+                showToast({ message: "Sound turned off", type: "info" });
+                return;
+            }
+
             buttons.forEach(b => b.classList.remove("is-active"));
             btn.classList.add("is-active");
 
-            const sound = btn.dataset.sound;
             if (sound === "off") {
                 stopAmbientSound();
                 showToast({ message: "Ambient sound off", type: "info" });
             } else {
                 playAmbientSound(sound);
-                showToast({ message: `Playing ${sound} ambience 🎧`, type: "success" });
+                const trackName = btn.querySelector("span")?.textContent?.trim() || btn.textContent.trim();
+                showToast({ message: `Playing ${trackName}`, type: "success" });
             }
         });
     });
@@ -1091,7 +1236,7 @@ function initializeQuickNotes() {
                 return;
             }
             navigator.clipboard.writeText(notesInput.value).then(() => {
-                showToast({ message: "Notes copied to clipboard! 📋", type: "success" });
+                showToast({ message: "Notes copied to clipboard!", type: "success" });
             }).catch(() => {
                 showToast({ message: "Failed to copy notes", type: "error" });
             });
@@ -1126,12 +1271,15 @@ function initializeQuickNotes() {
                 return;
             }
             const firstLine = text.split("\n")[0];
-            const title = firstLine.length > 60 ? firstLine.substring(0, 60) + "..." : firstLine;
+            const title = firstLine.length > 35 ? firstLine.substring(0, 32) + "..." : firstLine;
+            const details = text.length > 500 ? text.substring(0, 497) + "..." : text;
             
             addTask({
                 id: crypto.randomUUID(),
+                name: title,
                 title: title,
-                details: text,
+                details: details,
+                description: details,
                 subject: "General",
                 dueDate: getLocalDateString(),
                 estimatedTime: 30,
@@ -1141,7 +1289,7 @@ function initializeQuickNotes() {
             });
 
             document.dispatchEvent(new CustomEvent("tasks:changed"));
-            showToast({ message: "Note added to tasks! 🎯", type: "success" });
+            showToast({ message: "Note added to tasks!", type: "success" });
         });
     }
 }
@@ -1202,7 +1350,7 @@ function startStudySession() {
     showActiveSession();
     startTimer();
     showToast({
-        message: `Started ${duration}m session for "${taskTitle}" ⏱️`,
+        message: `Started ${duration}m session for "${taskTitle}"`,
         type: "success"
     });
 }
@@ -1352,18 +1500,47 @@ function finishStudySession(timerCompleted = false) {
     );
 
     showToast({
-        message: `Great job! Logged ${studiedMinutes} min study session 🎉`,
+        message: `Great job! Logged ${studiedMinutes} min study session`,
         type: "success"
     });
 
     if (timerCompleted) {
         console.log("Timer completed automatically.");
+        const chimePref = localStorage.getItem("studyflow_chime_pref");
+        if (chimePref !== "false") {
+            playTimerChime();
+        }
     }
 
     activeSession = null;
     remainingSeconds = 0;
     showStartSession();
     renderStudyPage();
+}
+
+function playTimerChime() {
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+
+        // Two-tone bell chime (C5 523.25Hz -> G5 783.99Hz)
+        [523.25, 783.99].forEach((freq, index) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, now + index * 0.22);
+            gain.gain.setValueAtTime(0.28, now + index * 0.22);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.22 + 0.9);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + index * 0.22);
+            osc.stop(now + index * 0.22 + 0.9);
+        });
+    } catch (e) {
+        console.warn("Could not play timer chime:", e);
+    }
 }
 
 function updatePlannerSessionStatus(taskId, date, status) {

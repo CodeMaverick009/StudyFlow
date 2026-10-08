@@ -8,7 +8,7 @@ import {
     createAccount,
     signIn
 } from "./storage.js";
-import { validateEmail, attachEmailInputValidation } from "./validation.js";
+import { validateEmail, attachEmailInputValidation, validateUsername, validatePassword, initCharCounters } from "./validation.js";
 import { playAmbientSound, stopAmbientSound } from "./ambientAudio.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializePreviewDemo();
     initializePipelineTutorial();
     initializeScrollReveal();
+    initCharCounters();
 });
 
 
@@ -211,8 +212,15 @@ async function handleSignup(form) {
     const email = formData.get("email").trim();
     const password = formData.get("password");
 
-    if (!name || !email || password.length < 8) {
-        showError(errorElement, "Please fill in every field — passwords need at least 8 characters.");
+    if (!name || !email || !password) {
+        showError(errorElement, "Please fill in every field.");
+        return;
+    }
+
+    const nameValidation = validateUsername(name);
+    if (!nameValidation.isValid) {
+        showError(errorElement, nameValidation.error);
+        form.querySelector("#signup-name")?.focus();
         return;
     }
 
@@ -221,6 +229,13 @@ async function handleSignup(form) {
         showError(errorElement, emailValidation.error);
         emailInput?.classList.add("input-invalid");
         emailInput?.focus();
+        return;
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+        showError(errorElement, passwordValidation.error);
+        form.querySelector("#signup-password")?.focus();
         return;
     }
 
@@ -253,6 +268,13 @@ async function handleLogin(form) {
         showError(errorElement, emailValidation.error);
         emailInput?.classList.add("input-invalid");
         emailInput?.focus();
+        return;
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+        showError(errorElement, passwordValidation.error);
+        form.querySelector("#login-password")?.focus();
         return;
     }
 
@@ -534,6 +556,13 @@ function initializePipelineTutorial() {
     soundButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             const soundType = btn.dataset.pipelineSound;
+            const isAlreadyActive = btn.classList.contains("is-active") && soundType !== "off";
+
+            if (isAlreadyActive) {
+                stopDemoAudio();
+                return;
+            }
+
             soundButtons.forEach(b => b.classList.remove("is-active"));
             btn.classList.add("is-active");
 

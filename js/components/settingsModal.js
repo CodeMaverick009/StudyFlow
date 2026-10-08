@@ -13,6 +13,9 @@ const ACCENT_COLOR_KEY = "studyflow_accent_color";
 const TIMER_PREF_KEY = "studyflow_timer_pref";
 const CHIME_PREF_KEY = "studyflow_chime_pref";
 
+const SHORT_BREAK_KEY = "studyflow_short_break_pref";
+const LONG_BREAK_KEY = "studyflow_long_break_pref";
+
 const ACCENT_COLORS = [
     { id: "terracotta", name: "Warm Terracotta", value: "#B86B4B" },
     { id: "olive", name: "Sage Olive", value: "#727966" },
@@ -52,6 +55,8 @@ function ensureModalDOM() {
     const currentTheme = getSavedTheme();
     const activeColor = localStorage.getItem(ACCENT_COLOR_KEY) || "#727966";
     const defaultTimer = localStorage.getItem(TIMER_PREF_KEY) || "25";
+    const shortBreak = localStorage.getItem(SHORT_BREAK_KEY) || "5";
+    const longBreak = localStorage.getItem(LONG_BREAK_KEY) || "15";
     const chimeEnabled = localStorage.getItem(CHIME_PREF_KEY) !== "false";
 
     const modalHTML = `
@@ -130,8 +135,28 @@ function ensureModalDOM() {
                             </div>
 
                             <div class="settings-group">
+                                <span class="settings-group-label">Short Break Duration</span>
+                                <span class="settings-group-desc">Length of short rest breaks between study sessions.</span>
+                                <select id="settings-short-break" class="form-control">
+                                    <option value="5" ${shortBreak === "5" ? "selected" : ""}>5 minutes (Standard)</option>
+                                    <option value="10" ${shortBreak === "10" ? "selected" : ""}>10 minutes</option>
+                                    <option value="15" ${shortBreak === "15" ? "selected" : ""}>15 minutes</option>
+                                </select>
+                            </div>
+
+                            <div class="settings-group">
+                                <span class="settings-group-label">Long Break Duration</span>
+                                <span class="settings-group-desc">Length of extended breaks after completing multiple focus sessions.</span>
+                                <select id="settings-long-break" class="form-control">
+                                    <option value="15" ${longBreak === "15" ? "selected" : ""}>15 minutes (Standard)</option>
+                                    <option value="20" ${longBreak === "20" ? "selected" : ""}>20 minutes</option>
+                                    <option value="30" ${longBreak === "30" ? "selected" : ""}>30 minutes</option>
+                                </select>
+                            </div>
+
+                            <div class="settings-group">
                                 <span class="settings-group-label">Sound Notifications</span>
-                                <span class="settings-group-desc">Play a chime when study timers complete.</span>
+                                <span class="settings-group-desc">Play an audio chime when study timers complete.</span>
                                 <div class="settings-toggle-row">
                                     <span>Timer completion chime</span>
                                     <input type="checkbox" id="settings-chime-toggle" ${chimeEnabled ? "checked" : ""}>
@@ -143,7 +168,8 @@ function ensureModalDOM() {
                         <div class="settings-tab-panel" data-settings-panel="profile">
                             <div class="settings-group">
                                 <span class="settings-group-label">Display Name</span>
-                                <input type="text" id="modal-settings-profile-name" class="form-control" value="${account?.name || ""}" placeholder="Your Name">
+                                <input type="text" id="modal-settings-profile-name" class="form-control" value="${account?.name || ""}" placeholder="Your Name" maxlength="20">
+                                <span class="char-counter" data-for="modal-settings-profile-name">Max 20 characters</span>
                             </div>
 
                             <div class="settings-group">
@@ -163,17 +189,20 @@ function ensureModalDOM() {
 
                             <div class="settings-group">
                                 <span class="settings-group-label">Current Password</span>
-                                <input type="password" id="modal-settings-current-password" class="form-control" placeholder="Enter current password">
+                                <input type="password" id="modal-settings-current-password" class="form-control" placeholder="Enter current password" maxlength="30">
+                                <span class="char-counter" data-for="modal-settings-current-password">Max 30 characters</span>
                             </div>
 
                             <div class="settings-group">
                                 <span class="settings-group-label">New Password</span>
-                                <input type="password" id="modal-settings-new-password" class="form-control" placeholder="Enter new password (min. 8 characters)">
+                                <input type="password" id="modal-settings-new-password" class="form-control" placeholder="Enter new password (8-30 characters)" maxlength="30">
+                                <span class="char-counter" data-for="modal-settings-new-password">Max 30 characters</span>
                             </div>
 
                             <div class="settings-group">
                                 <span class="settings-group-label">Confirm New Password</span>
-                                <input type="password" id="modal-settings-confirm-password" class="form-control" placeholder="Confirm new password">
+                                <input type="password" id="modal-settings-confirm-password" class="form-control" placeholder="Confirm new password" maxlength="30">
+                                <span class="char-counter" data-for="modal-settings-confirm-password">Max 30 characters</span>
                             </div>
 
                             <button type="button" class="button button-primary button-sm" id="modal-settings-password-save" style="align-self: flex-start; margin-top: 8px;">
@@ -292,10 +321,20 @@ function bindModalEvents() {
         showToast({ message: "Dark theme applied", type: "info" });
     });
 
-    // Default duration & chime
+    // Default duration & chime & breaks
     document.getElementById("settings-default-duration")?.addEventListener("change", (e) => {
         localStorage.setItem(TIMER_PREF_KEY, e.target.value);
         showToast({ message: "Default study timer updated", type: "success" });
+    });
+
+    document.getElementById("settings-short-break")?.addEventListener("change", (e) => {
+        localStorage.setItem(SHORT_BREAK_KEY, e.target.value);
+        showToast({ message: "Short break duration updated", type: "success" });
+    });
+
+    document.getElementById("settings-long-break")?.addEventListener("change", (e) => {
+        localStorage.setItem(LONG_BREAK_KEY, e.target.value);
+        showToast({ message: "Long break duration updated", type: "success" });
     });
 
     document.getElementById("settings-chime-toggle")?.addEventListener("change", (e) => {
@@ -413,10 +452,20 @@ function updateThemeButtons(theme) {
     }
 }
 
-export function openSettingsModal() {
+export function openSettingsModal(initialTab = null) {
     ensureModalDOM();
     const modal = document.getElementById("settings-modal");
     if (!modal) return;
+
+    if (initialTab) {
+        modal.querySelectorAll("[data-settings-tab]").forEach(b => b.classList.remove("is-active"));
+        modal.querySelectorAll("[data-settings-panel]").forEach(p => p.classList.remove("is-active"));
+
+        const tabBtn = modal.querySelector(`[data-settings-tab="${initialTab}"]`);
+        const targetPanel = modal.querySelector(`[data-settings-panel="${initialTab}"]`);
+        if (tabBtn) tabBtn.classList.add("is-active");
+        if (targetPanel) targetPanel.classList.add("is-active");
+    }
 
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");

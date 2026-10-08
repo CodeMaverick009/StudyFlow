@@ -197,3 +197,115 @@ export function attachEmailInputValidation(inputElement, options = {}) {
         }
     });
 }
+
+/**
+ * Validates a username / display name.
+ * Maximum length: 20 characters.
+ * @param {string} name
+ * @returns {{ isValid: boolean, error: string | null, value: string }}
+ */
+export function validateUsername(name) {
+    const trimmed = String(name || "").trim();
+    if (!trimmed) {
+        return { isValid: false, error: "Please enter your name.", value: "" };
+    }
+    if (trimmed.length > 20) {
+        return { isValid: false, error: "Username cannot be longer than 20 characters.", value: trimmed };
+    }
+    return { isValid: true, error: null, value: trimmed };
+}
+
+/**
+ * Validates password length constraints.
+ * Minimum length: 8 characters, Maximum length: 30 characters.
+ * @param {string} password
+ * @returns {{ isValid: boolean, error: string | null }}
+ */
+export function validatePassword(password) {
+    if (!password) {
+        return { isValid: false, error: "Please enter a password." };
+    }
+    if (password.length < 8) {
+        return { isValid: false, error: "Password must be at least 8 characters long." };
+    }
+    if (password.length > 30) {
+        return { isValid: false, error: "Password cannot be longer than 30 characters." };
+    }
+    return { isValid: true, error: null };
+}
+
+/**
+ * Validates a task name / title.
+ * Maximum length: 35 characters.
+ * @param {string} name
+ * @returns {{ isValid: boolean, error: string | null, value: string }}
+ */
+export function validateTaskName(name) {
+    const trimmed = String(name || "").trim();
+    if (!trimmed) {
+        return { isValid: false, error: "Please enter a task name.", value: "" };
+    }
+    if (trimmed.length > 35) {
+        return { isValid: false, error: "Task name cannot be longer than 35 characters.", value: trimmed };
+    }
+    return { isValid: true, error: null, value: trimmed };
+}
+
+/**
+ * Validates a task description.
+ * Maximum length: 500 characters.
+ * @param {string} description
+ * @returns {{ isValid: boolean, error: string | null, value: string }}
+ */
+export function validateTaskDescription(description) {
+    const trimmed = String(description || "").trim();
+    if (trimmed.length > 500) {
+        return { isValid: false, error: "Task description cannot be longer than 500 characters.", value: trimmed };
+    }
+    return { isValid: true, error: null, value: trimmed };
+}
+
+/**
+ * Initializes character maximum indicators on inputs and textareas that have a maxlength.
+ * Connects to existing .char-counter elements or inserts one dynamically on the bottom right.
+ *
+ * @param {HTMLElement|Document} [root=document]
+ */
+export function initCharCounters(root = document) {
+    const fields = root.querySelectorAll("input[maxlength], textarea[maxlength]");
+    fields.forEach(field => {
+        const max = parseInt(field.getAttribute("maxlength"), 10);
+        if (!max || isNaN(max)) return;
+
+        let counter = null;
+        if (field.id) {
+            counter = field.parentElement?.querySelector(`.char-counter[data-for="${field.id}"]`);
+        }
+        if (!counter) {
+            const next = field.nextElementSibling;
+            if (next && next.classList.contains("char-counter")) {
+                counter = next;
+            }
+        }
+
+        if (!counter) {
+            counter = document.createElement("span");
+            counter.className = "char-counter";
+            if (field.id) counter.setAttribute("data-for", field.id);
+            counter.setAttribute("aria-live", "polite");
+            field.insertAdjacentElement("afterend", counter);
+        }
+
+        counter.textContent = `Max ${max} characters`;
+    });
+}
+
+/**
+ * Refreshes character limit indicators within a container.
+ * @param {HTMLElement|Document} [root=document]
+ */
+export function updateCharCounters(root = document) {
+    initCharCounters(root);
+}
+
+

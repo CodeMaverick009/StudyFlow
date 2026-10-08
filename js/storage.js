@@ -2,7 +2,7 @@
 // STUDYFLOW — STORAGE
 // =========================================================
 
-import { validateEmail } from "./validation.js";
+import { validateEmail, validateUsername, validatePassword } from "./validation.js";
 
 const TASKS_KEY = "studyflow-tasks";
 const SESSIONS_KEY = "studyflow-sessions";
@@ -71,10 +71,21 @@ async function hashPassword(password, salt) {
 
 
 export async function createAccount({ name, email, password }) {
+    const nameValidation = validateUsername(name);
+    if (!nameValidation.isValid) {
+        throw new Error(nameValidation.error);
+    }
+
     const emailValidation = validateEmail(email);
     if (!emailValidation.isValid) {
         throw new Error(emailValidation.error);
     }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+        throw new Error(passwordValidation.error);
+    }
+
     const normalizedEmail = emailValidation.normalizedEmail;
     const accounts = getAccounts();
 
@@ -87,7 +98,7 @@ export async function createAccount({ name, email, password }) {
 
     const account = {
         id: crypto.randomUUID(),
-        name: String(name || "").trim(),
+        name: nameValidation.value,
         email: normalizedEmail,
         salt,
         passwordHash,
@@ -114,6 +125,10 @@ export async function signIn({ email, password }) {
         throw new Error("Incorrect email or password.");
     }
 
+    if (password && password.length > 30) {
+        throw new Error("Password cannot be longer than 30 characters.");
+    }
+
     const passwordHash = await hashPassword(password, account.salt);
 
     if (passwordHash !== account.passwordHash) {
@@ -138,10 +153,11 @@ export function updateProfile({ name, email }) {
         throw new Error("Account not found.");
     }
 
-    const cleanName = String(name || "").trim();
-    if (!cleanName) {
-        throw new Error("Please enter a valid display name.");
+    const nameValidation = validateUsername(name);
+    if (!nameValidation.isValid) {
+        throw new Error(nameValidation.error);
     }
+    const cleanName = nameValidation.value;
 
     const emailValidation = validateEmail(email);
     if (!emailValidation.isValid) {
@@ -172,8 +188,9 @@ export async function changePassword({ currentPassword, newPassword }) {
         throw new Error("Please enter your current password.");
     }
 
-    if (!newPassword || newPassword.length < 8) {
-        throw new Error("New password must be at least 8 characters long.");
+    const passwordValidation = validatePassword(newPassword);
+    if (!passwordValidation.isValid) {
+        throw new Error(passwordValidation.error);
     }
 
     if (currentPassword === newPassword) {
@@ -276,11 +293,22 @@ export function saveTasks(tasks) {
 export function addTask(task) {
     const tasks = getTasks();
 
-    tasks.push(task);
+    const sanitizedTask = { ...task };
+    if (sanitizedTask.name && sanitizedTask.name.length > 35) {
+        sanitizedTask.name = sanitizedTask.name.slice(0, 35);
+    }
+    if (sanitizedTask.title && sanitizedTask.title.length > 35) {
+        sanitizedTask.title = sanitizedTask.title.slice(0, 35);
+    }
+    if (sanitizedTask.description && sanitizedTask.description.length > 500) {
+        sanitizedTask.description = sanitizedTask.description.slice(0, 500);
+    }
+
+    tasks.push(sanitizedTask);
 
     saveTasks(tasks);
 
-    return task;
+    return sanitizedTask;
 }
 
 
@@ -294,6 +322,17 @@ export function getTaskById(id) {
 export function updateTask(id, updates) {
     const tasks = getTasks();
 
+    const sanitizedUpdates = { ...updates };
+    if (sanitizedUpdates.name && sanitizedUpdates.name.length > 35) {
+        sanitizedUpdates.name = sanitizedUpdates.name.slice(0, 35);
+    }
+    if (sanitizedUpdates.title && sanitizedUpdates.title.length > 35) {
+        sanitizedUpdates.title = sanitizedUpdates.title.slice(0, 35);
+    }
+    if (sanitizedUpdates.description && sanitizedUpdates.description.length > 500) {
+        sanitizedUpdates.description = sanitizedUpdates.description.slice(0, 500);
+    }
+
     const updatedTasks = tasks.map(task => {
         if (task.id !== id) {
             return task;
@@ -301,7 +340,7 @@ export function updateTask(id, updates) {
 
         return {
             ...task,
-            ...updates
+            ...sanitizedUpdates
         };
     });
 
