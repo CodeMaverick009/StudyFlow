@@ -215,4 +215,4 @@ The goal of StudyFlow is simple:
 
 ## License
 
-This project was created as part of an Computer Science school project.
+This project was created as part of an Computer Science school project in the Netherlands.
